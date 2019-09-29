@@ -44,18 +44,20 @@ class FeedPage extends StatelessWidget {
         onRefresh: (){
           print("refreshed");
 
-          var reqOpt = {
-            // "user_id": "19025957",
-            "screen_name": "TTCnotices",
-            "count": 20,
-            "trim_user": true,
-            "exclude_replies": true
-          };
-
+          // Making the request to twitter
           _twitterOauth.getTwitterRequest(
             "GET",
-            "https://api.twitter.com/1.1/search/tweets.json",
-            options: reqOpt
+            "statuses/user_timeline.json",
+            // "/1.1/statuses/user_timeline.json",
+            // "/1.1/search/tweets.json",
+            // "/1.1/users/show.json",
+            options: {
+              // "user_id": "19025957",
+              "screen_name": "TTCnotices",
+              // "count": "20",
+              // "trim_user": "true",
+              // "exclude_replies": "true"
+            }
           );
           // return fetchPost();
           return Future.delayed(Duration(seconds: 0), () => 'Large Latte'); 

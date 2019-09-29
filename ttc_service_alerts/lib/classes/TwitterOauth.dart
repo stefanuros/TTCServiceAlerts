@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'dart:core';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:http/http.dart';
 
 /// This class is used to access the twitter api
 /// 
@@ -29,6 +31,8 @@ class TwitterOauth {
   var _consumerSecret;
   /// This is the token secret for twitter
   var _tokenSecret;
+  /// The base url for the twitter api
+  final _baseUrl = "https://api.twitter.com/1.1/";
 
   /// This is a table of the bytes that do not need to be replaced when percent
   /// encoding. Link can be found here
@@ -122,55 +126,93 @@ class TwitterOauth {
   /// Accepts a String [method] which is the REST method (GET, POST...) of the
   /// request being made. The request is made to a String [url] which is the 
   /// base url of the request. Finally there is a map [options] which holds
-  /// all of the options of the request being made.
+  /// all of the options of the request being made. [timeout] is the time before
+  /// the request is timed out if it is not completed in that time.
   /// 
   /// This is the where the infomartion for this method comes from:
   /// https://developer.twitter.com/en/docs/basics/authentication/guides/creating-a-signature
-  getTwitterRequest(String method, String url, {Map options}) {
+  getTwitterRequest(String method, String url, {Map<String, String> options, int timeout: 10}) async {
     if(options == null) options = {};
 
     // Create the nonce
-    _oauth_nonce = generateNonce();
-    // Get the current timestamp
-    _oauth_timestamp = new DateTime.now().millisecondsSinceEpoch;
+    _oauth_nonce = _generateNonce();
+    // Get the current timestamp. Convert from milliseconds to seconds
+    _oauth_timestamp = (new DateTime.now().millisecondsSinceEpoch/1000).floor();
     // Get the signature
-    _oauth_signature = generateSignature(method, url, options);
+    _oauth_signature = _generateSignature(method, url, options);
 
+    print(_oauth_timestamp);
+    print(_oauth_nonce);
     // Get the authentication headers
-    var header = getOauthHeader();
+    var authHeader = _getOauthHeader();
 
-    print(header);
+    print(authHeader);
+
+    // The response from the request
+    Response response;
+
+    if(method.toUpperCase() == "GET")
+    {
+      response = await get(
+        Uri.https(
+          "api.twitter.com", 
+          "/1.1/" + url, 
+          options
+        ), 
+        headers: {
+          "Authorization": authHeader,
+          "Content-Type": "application/json"
+        }
+      ).timeout(Duration(seconds: timeout));    
+    }
+    else if(method.toUpperCase() == "POST")
+    {
+      response = await post(
+        Uri.https(
+          "api.twitter.com", 
+          "/1.1/" + url, 
+          options
+        ), 
+        headers: {
+          "Authorization": authHeader,
+          "Content-Type": "application/json"
+        }
+      ).timeout(Duration(seconds: timeout));    
+    }
+
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
   }
 
 
   /// Function to get a completed header for authorising a request to twitter
-  getOauthHeader() {
+  _getOauthHeader() {
     var dst = "OAuth ";
     // Add all the key value pairs to the DST
     // If there are key/value pairs remaining, append a comma ‘,’ and a space ‘ ‘ to DST.
-    dst += encodeDstKeyValuePair("oauth_consumer_key", _oauth_consumer_key) + ", ";
-    dst += encodeDstKeyValuePair("oauth_nonce", _oauth_nonce) + ", ";
-    dst += encodeDstKeyValuePair("oauth_signature", _oauth_signature) + ", ";
-    dst += encodeDstKeyValuePair("oauth_signature_method", _oauth_signature_method) + ", ";
-    dst += encodeDstKeyValuePair("oauth_timestamp", _oauth_timestamp) + ", ";
-    dst += encodeDstKeyValuePair("oauth_token", _oauth_token) + ", ";
-    dst += encodeDstKeyValuePair("oauth_version", _oauth_version);
+    dst += _encodeDstKeyValuePair("oauth_consumer_key", _oauth_consumer_key) + ",";
+    dst += _encodeDstKeyValuePair("oauth_nonce", _oauth_nonce) + ",";
+    dst += _encodeDstKeyValuePair("oauth_signature", _oauth_signature) + ",";
+    dst += _encodeDstKeyValuePair("oauth_signature_method", _oauth_signature_method) + ",";
+    dst += _encodeDstKeyValuePair("oauth_timestamp", _oauth_timestamp) + ",";
+    dst += _encodeDstKeyValuePair("oauth_token", _oauth_token) + ",";
+    dst += _encodeDstKeyValuePair("oauth_version", _oauth_version);
 
     return dst;
   }
 
   /// This function takes a key, value pair and applies the proper procedure that
   /// Twitter outlines.
-  encodeDstKeyValuePair(key, value) {
+  _encodeDstKeyValuePair(key, value) {
     var singleDST = "";
 
     // Percent encode the key and append it to DST.
-    singleDST += percentEncode(key);
+    singleDST += Uri.encodeComponent(key);
     // Append the equals character ‘=’ to DST.
     // Append a double quote ‘”’ to DST.
     singleDST += "=\"";
     // Percent encode the value and append it to DST.
-    singleDST += percentEncode(value.toString());
+    singleDST += Uri.encodeComponent(value.toString());
     // Append a double quote ‘”’ to DST.
     singleDST += "\"";
 
@@ -179,8 +221,7 @@ class TwitterOauth {
 
   
   /// This function will create a signature for the request
-  // TODO
-  generateSignature(method, url, opt) {
+  _generateSignature(method, url, opt) {
 
     // The list of key-value pairs that will be added to the paramString once sorted
     var paramPairs = [];
@@ -207,7 +248,7 @@ class TwitterOauth {
       // Append the encoded key to the output string.
       // Append the ‘=’ character to the output string.
       // Append the encoded value to the output string.
-      paramPairs.add(percentEncode(k) + "=" + percentEncode(v.toString()));
+      paramPairs.add(Uri.encodeComponent(k) + "=" + Uri.encodeComponent(v.toString()));
     });
 
     // Sort the list of parameters alphabetically [1] by encoded key [2].
@@ -215,13 +256,7 @@ class TwitterOauth {
     paramPairs.sort();
 
     // Put all the params together into paramString
-    for(var i = 0; i < paramPairs.length; i++) {
-      // Add the paramPairs to the paramString
-      paramString += paramPairs[i];
-
-      // Choose whether to add the & on the last item or not
-      paramString += ( i < paramPairs.length - 1 ? "&" : "" );
-    }
+    paramPairs.join("&");
 
     // Start creating the output string
     // Convert the HTTP Method to uppercase and set the output string equal to this value.
@@ -229,9 +264,9 @@ class TwitterOauth {
     var output = method.toUpperCase() + "&";
     // Percent encode the URL and append it to the output string.
     // Append the ‘&’ character to the output string.
-    output +=  percentEncode(url) + "&";
+    output +=  Uri.encodeComponent(_baseUrl + url) + "&";
     // Percent encode the parameter string and append it to the output string.
-    output +=  percentEncode(paramString);
+    output +=  Uri.encodeComponent(paramString);
 
     // Now output is the signature base string
     List<int> signatureBaseString = utf8.encode(output);
@@ -251,42 +286,43 @@ class TwitterOauth {
   /// This function will percent encode [val] accoring to twitters rules 
   /// specified here:
   /// https://developer.twitter.com/en/docs/basics/authentication/guides/percent-encoding-parameters
-  percentEncode(String val) {
-    // Convert input string to bytes
-    List<int> bytes = utf8.encode(val);
-    // List<int> output = [];
-    String output = "";
+  /// Replaced with Uri.encodeComponent
+  // _percentEncode(String val) {
+  //   // Convert input string to bytes
+  //   List<int> bytes = utf8.encode(val);
+  //   // List<int> output = [];
+  //   String output = "";
 
-    // Loop through each letter in val
-    for(var i = 0; i < bytes.length; i++) {
-      // Get the individual character
-      var char = bytes[i];
+  //   // Loop through each letter in val
+  //   for(var i = 0; i < bytes.length; i++) {
+  //     // Get the individual character
+  //     var char = bytes[i];
 
-      // If the byte is not listed in the table, encode it
-      // Otherwise, add it to the output
-      if(!_percentEncodeValues.contains(char)) {
-        // Add a % to the output
-        output += "%"; 
-        // convert char to a string representing the hexidecimal of char
-        // Get the specific byte of the string that we want to use
-        // make it uppercase (required by twitter)
-        // Add the string to the output
-        output += char.toRadixString(16)[0].toUpperCase();
-        output += char.toRadixString(16)[1].toUpperCase();
-      }
-      else
-      {
-        // Add the character to the output list of bytes
-        output += val[i];
-      }
-    }
+  //     // If the byte is not listed in the table, encode it
+  //     // Otherwise, add it to the output
+  //     if(!_percentEncodeValues.contains(char)) {
+  //       // Add a % to the output
+  //       output += "%"; 
+  //       // convert char to a string representing the hexidecimal of char
+  //       // Get the specific byte of the string that we want to use
+  //       // make it uppercase (required by twitter)
+  //       // Add the string to the output
+  //       output += char.toRadixString(16)[0].toUpperCase();
+  //       output += char.toRadixString(16)[1].toUpperCase();
+  //     }
+  //     else
+  //     {
+  //       // Add the character to the output list of bytes
+  //       output += val[i];
+  //     }
+  //   }
 
-    // Return the fully encoded string
-    return output;
-  }
+  //   // Return the fully encoded string
+  //   return output;
+  // }
 
   /// This function creates a nonce for the request
-  generateNonce() {
+  _generateNonce() {
     // This code comes from this tutorial
     // https://www.scottbrady91.com/Dart/Generating-a-Crypto-Random-String-in-Dart
     final random = Random.secure();
