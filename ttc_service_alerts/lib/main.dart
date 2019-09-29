@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
               // Icon(Icons.notifications_active),
             ],
           ),
-        ),
+        ), 
       ),
     );
   }
