@@ -1,3 +1,6 @@
+# Secret api keys
+**/lib/config/keys.dart
+
 # Miscellaneous
 *.class
 *.log
