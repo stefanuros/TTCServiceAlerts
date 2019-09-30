@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:core';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 /// This class is used to access the twitter api
@@ -136,17 +137,15 @@ class TwitterOauth {
 
     // Create the nonce
     _oauth_nonce = _generateNonce();
+    _oauth_nonce = "gEloXVNGoiHylinMGfUXKJBsTMKCZFwyGjbc";
     // Get the current timestamp. Convert from milliseconds to seconds
-    _oauth_timestamp = (new DateTime.now().millisecondsSinceEpoch/1000).floor();
+    _oauth_timestamp = (new DateTime.now().millisecondsSinceEpoch/1000).floor().toString();
+    _oauth_timestamp = 1569798108.toString();
     // Get the signature
     _oauth_signature = _generateSignature(method, url, options);
 
-    print(_oauth_timestamp);
-    print(_oauth_nonce);
     // Get the authentication headers
     var authHeader = _getOauthHeader();
-
-    print(authHeader);
 
     // The response from the request
     Response response;
@@ -181,7 +180,7 @@ class TwitterOauth {
     }
 
     print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    debugPrint('Response body: ${response.body}');
   }
 
 
@@ -207,12 +206,12 @@ class TwitterOauth {
     var singleDST = "";
 
     // Percent encode the key and append it to DST.
-    singleDST += Uri.encodeComponent(key);
+    singleDST += _percentEncode(key);
     // Append the equals character ‘=’ to DST.
     // Append a double quote ‘”’ to DST.
     singleDST += "=\"";
     // Percent encode the value and append it to DST.
-    singleDST += Uri.encodeComponent(value.toString());
+    singleDST += _percentEncode(value.toString());
     // Append a double quote ‘”’ to DST.
     singleDST += "\"";
 
@@ -248,7 +247,7 @@ class TwitterOauth {
       // Append the encoded key to the output string.
       // Append the ‘=’ character to the output string.
       // Append the encoded value to the output string.
-      paramPairs.add(Uri.encodeComponent(k) + "=" + Uri.encodeComponent(v.toString()));
+      paramPairs.add(_percentEncode(k) + "=" + _percentEncode(v.toString()));
     });
 
     // Sort the list of parameters alphabetically [1] by encoded key [2].
@@ -256,7 +255,7 @@ class TwitterOauth {
     paramPairs.sort();
 
     // Put all the params together into paramString
-    paramPairs.join("&");
+    paramString = paramPairs.join("&");
 
     // Start creating the output string
     // Convert the HTTP Method to uppercase and set the output string equal to this value.
@@ -264,20 +263,20 @@ class TwitterOauth {
     var output = method.toUpperCase() + "&";
     // Percent encode the URL and append it to the output string.
     // Append the ‘&’ character to the output string.
-    output +=  Uri.encodeComponent(_baseUrl + url) + "&";
+    output +=  _percentEncode(_baseUrl + url) + "&";
     // Percent encode the parameter string and append it to the output string.
-    output +=  Uri.encodeComponent(paramString);
+    output +=  _percentEncode(paramString);
 
     // Now output is the signature base string
     List<int> signatureBaseString = utf8.encode(output);
 
     // Get a signing key by combining consumer secret and token secret
-    List<int> signingKey = utf8.encode(_consumerSecret + "&" + _tokenSecret);
+    List<int> signingKey = utf8.encode(_percentEncode(_consumerSecret) + "&" + _percentEncode(_tokenSecret));
 
     // Create an Hmac object with the signing key
-    var hmacSha256 = new Hmac(sha256, signingKey);
+    var hmacSha1 = new Hmac(sha1, signingKey);
     // Put the signature base string into the hmac object
-    var digest = hmacSha256.convert(signatureBaseString);
+    var digest = hmacSha1.convert(signatureBaseString);
 
     // Base64 encode the bites returned from the hmac-sha1 operation
     return base64Url.encode(digest.bytes);
@@ -286,40 +285,40 @@ class TwitterOauth {
   /// This function will percent encode [val] accoring to twitters rules 
   /// specified here:
   /// https://developer.twitter.com/en/docs/basics/authentication/guides/percent-encoding-parameters
-  /// Replaced with Uri.encodeComponent
-  // _percentEncode(String val) {
-  //   // Convert input string to bytes
-  //   List<int> bytes = utf8.encode(val);
-  //   // List<int> output = [];
-  //   String output = "";
+  _percentEncode(String val) {
+    // Convert input string to bytes
+    List<int> bytes = utf8.encode(val);
+    // List<int> output = [];
+    String output = "";
 
-  //   // Loop through each letter in val
-  //   for(var i = 0; i < bytes.length; i++) {
-  //     // Get the individual character
-  //     var char = bytes[i];
+    // Loop through each letter in val
+    for(var i = 0; i < bytes.length; i++) {
+      // Get the individual character
+      var char = bytes[i];
 
-  //     // If the byte is not listed in the table, encode it
-  //     // Otherwise, add it to the output
-  //     if(!_percentEncodeValues.contains(char)) {
-  //       // Add a % to the output
-  //       output += "%"; 
-  //       // convert char to a string representing the hexidecimal of char
-  //       // Get the specific byte of the string that we want to use
-  //       // make it uppercase (required by twitter)
-  //       // Add the string to the output
-  //       output += char.toRadixString(16)[0].toUpperCase();
-  //       output += char.toRadixString(16)[1].toUpperCase();
-  //     }
-  //     else
-  //     {
-  //       // Add the character to the output list of bytes
-  //       output += val[i];
-  //     }
-  //   }
+      // If the byte is not listed in the table, encode it
+      // Otherwise, add it to the output
+      if(!_percentEncodeValues.contains(char)) {
+        // Add a % to the output
+        // output += "%"; 
+        output += String.fromCharCode(0x25);
+        // convert char to a string representing the hexidecimal of char
+        // Get the specific byte of the string that we want to use
+        // make it uppercase (required by twitter)
+        // Add the string to the output
+        output += char.toRadixString(16)[0].toUpperCase();
+        output += char.toRadixString(16)[1].toUpperCase();
+      }
+      else
+      {
+        // Add the character to the output list of bytes
+        output += val[i];
+      }
+    }
 
-  //   // Return the fully encoded string
-  //   return output;
-  // }
+    // Return the fully encoded string
+    return output;
+  }
 
   /// This function creates a nonce for the request
   _generateNonce() {

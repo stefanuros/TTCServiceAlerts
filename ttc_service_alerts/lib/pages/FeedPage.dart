@@ -48,15 +48,13 @@ class FeedPage extends StatelessWidget {
           _twitterOauth.getTwitterRequest(
             "GET",
             "statuses/user_timeline.json",
-            // "/1.1/statuses/user_timeline.json",
-            // "/1.1/search/tweets.json",
-            // "/1.1/users/show.json",
             options: {
-              // "user_id": "19025957",
+              "user_id": "19025957",
               "screen_name": "TTCnotices",
-              // "count": "20",
-              // "trim_user": "true",
-              // "exclude_replies": "true"
+              "count": "20",
+              "trim_user": "true",
+              "exclude_replies": "true",
+              "tweet_mode": "extended" // Used to prevent truncating tweets
             }
           );
           // return fetchPost();
