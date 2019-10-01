@@ -19,20 +19,26 @@ class MyApp extends StatelessWidget {
             bottom: TabBar(
               indicatorColor: Colors.white,
               tabs: [
-                Tab(icon: Icon(Icons.directions_transit),),
-                Tab(icon: Icon(Icons.notifications_active),),
+                Tab(
+                  icon: Icon(Icons.directions_transit),
+                ),
+                Tab(
+                  icon: Icon(Icons.notifications_active),
+                ),
               ],
             ),
           ),
-          body: TabBarView(
-            children: [
-              FeedPage(),
-              SettingsPage()
-              // Icon(Icons.directions_transit),
-              // Icon(Icons.notifications_active),
-            ],
+          body: SafeArea(
+            child: TabBarView(
+              children: [
+                FeedPage(),
+                SettingsPage()
+                // Icon(Icons.directions_transit),
+                // Icon(Icons.notifications_active),
+              ],
+            ),
           ),
-        ), 
+        ),
       ),
     );
   }
