@@ -31,7 +31,7 @@ class FeedPage extends StatelessWidget {
         "Line 2 Bloor-Danforth",
         "35m",
         "1"),
-    ListItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
+    ListItem("Detour via Birchmo unt Rd and Foxridge Dr due to a collision.",
         "68 Warden", "1h", "1"),
     ListItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
         "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
