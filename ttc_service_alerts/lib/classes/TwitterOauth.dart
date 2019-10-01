@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:core';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 /// This class is used to access the twitter api
@@ -127,11 +126,14 @@ class TwitterOauth {
   /// Accepts a String [method] which is the REST method (GET, POST...) of the
   /// request being made. The request is made to a String [url] which is the 
   /// base url of the request. Finally there is a map [options] which holds
-  /// all of the options of the request being made. [timeout] is the time before
+  /// all of the [options] of the request being made. [timeout] is the time before
   /// the request is timed out if it is not completed in that time.
   /// 
   /// This is the where the infomartion for this method comes from:
   /// https://developer.twitter.com/en/docs/basics/authentication/guides/creating-a-signature
+  /// 
+  /// The twitter developer website also goes into detail about [options] that can
+  /// be applied. These [options] are of type Map<String, String>.
   getTwitterRequest(String method, String url, {Map<String, String> options, int timeout: 10}) async {
     if(options == null) options = {};
 
@@ -148,11 +150,20 @@ class TwitterOauth {
     var authHeader = _getOauthHeader();
 
     // The response from the request
-    Response response;
+    Future response;
 
+    // Add a post and get option
     if(method.toUpperCase() == "GET")
     {
-      response = await get(
+      // Make a request with a payload and a header
+      // The payload is an https request with api.twitter.com as the website
+      // /1.1/ + url is the path from the base url to the endpoint we're trying 
+      // to reach
+      // options are the options being sent to the endpoint
+      // The headers handle the authentication
+      // The timeout makes sure that if something goes wrong, the app doesnt 
+      // hang forever
+      response = get(
         Uri.https(
           "api.twitter.com", 
           "/1.1/" + url, 
@@ -164,9 +175,10 @@ class TwitterOauth {
         }
       ).timeout(Duration(seconds: timeout));    
     }
+    // Repeat for POST
     else if(method.toUpperCase() == "POST")
     {
-      response = await post(
+      response = post(
         Uri.https(
           "api.twitter.com", 
           "/1.1/" + url, 
@@ -179,8 +191,8 @@ class TwitterOauth {
       ).timeout(Duration(seconds: timeout));    
     }
 
-    print('Response status: ${response.statusCode}');
-    debugPrint('Response body: ${response.body}');
+    // Return the future
+    return response;
   }
 
 
