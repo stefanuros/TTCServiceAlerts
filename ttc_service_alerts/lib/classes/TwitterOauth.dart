@@ -11,20 +11,20 @@ import 'package:http/http.dart';
 class TwitterOauth {
   // These 7 are the oauth values needed, spelled like they are
   /// This is the consumer key from twitter
-  var _oauth_consumer_key;
+  var _oauth_consumer_key; //ignore: non_constant_identifier_names
   /// This is a unique id given to a request that twitter can use to prevent 
   /// the same request from being sent twice. It is automatically generated
-  var _oauth_nonce;
+  var _oauth_nonce; //ignore: non_constant_identifier_names
   /// This is the request signature twitter requires
-  var _oauth_signature;
+  var _oauth_signature; //ignore: non_constant_identifier_names
   /// This is the signature method twitter requires
-  final _oauth_signature_method = "HMAC-SHA1";
+  final _oauth_signature_method = "HMAC-SHA1"; //ignore: non_constant_identifier_names
   /// This is the timestamp of the request. Old requests are disregarded
-  var _oauth_timestamp;
+  var _oauth_timestamp; //ignore: non_constant_identifier_names
   /// This is the token from twitter
-  var _oauth_token;
+  var _oauth_token; //ignore: non_constant_identifier_names
   /// This is the oauth version twitter requires for a request
-  final _oauth_version = "1.0";
+  final _oauth_version = "1.0"; //ignore: non_constant_identifier_names
 
   // These are the api secrets from the twitter developer page
   /// This is the consumer secret for twitter
