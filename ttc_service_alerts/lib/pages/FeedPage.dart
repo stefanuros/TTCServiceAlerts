@@ -77,37 +77,38 @@ class FeedPage extends StatelessWidget {
     Icon(Icons.subway),
     Icon(Icons.directions_bus),
     Icon(Icons.directions_railway),
+
     Icon(Icons.info),
     Icon(Icons.info_outline),
   ];
 
-  FeedPage() {
-    // Making the request to twitter
-    Future twitterRequest = _twitterOauth
-        .getTwitterRequest("GET", "statuses/user_timeline.json", options: {
-      "user_id": "19025957",
-      "screen_name": "TTCnotices",
-      "count": "20",
-      "trim_user": "true",
-      // "exclude_replies": "true",
-      "tweet_mode": "extended" // Used to prevent truncating tweets
-    });
+  // FeedPage() {
+  //   // Making the request to twitter
+  //   Future twitterRequest = _twitterOauth
+  //       .getTwitterRequest("GET", "statuses/user_timeline.json", options: {
+  //     "user_id": "19025957",
+  //     "screen_name": "TTCnotices",
+  //     "count": "20",
+  //     "trim_user": "true",
+  //     // "exclude_replies": "true",
+  //     "tweet_mode": "extended" // Used to prevent truncating tweets
+  //   });
 
-    // Handle the future returned from the future builder
-    Widget f = FutureBuilder(
-      future: twitterRequest,
-      builder: (context, snapshot) {
-        // If the future is done
-        print("Here");
-        if (snapshot.connectionState == ConnectionState.done) {
-          print("Future Done");
-          print(context);
-          return Text("Done");
-        }
-        return Text("Not Done");
-      },
-    );
-  }
+  //   // Handle the future returned from the future builder
+  //   Widget f = FutureBuilder(
+  //     future: twitterRequest,
+  //     builder: (context, snapshot) {
+  //       // If the future is done
+  //       print("Here");
+  //       if (snapshot.connectionState == ConnectionState.done) {
+  //         print("Future Done");
+  //         print(context);
+  //         return Text("Done");
+  //       }
+  //       return Text("Not Done");
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -130,19 +131,21 @@ class FeedPage extends StatelessWidget {
           //   }
           // );
           // // return fetchPost();
-          return Future.delayed(Duration(seconds: 0), () => 'Large Latte');
+          return Future.delayed(Duration(seconds: 20), () => 'Large Latte');
         },
         child: FutureBuilder(
           // future: _twitterOauth.getTwitterRequest(
-          //     "GET", "statuses/user_timeline.json",
-          //     options: {
-          //       "user_id": "19025957",
-          //       "screen_name": "TTCnotices",
-          //       "count": "20",
-          //       "trim_user": "true",
-          //       // "exclude_replies": "true",
-          //       "tweet_mode": "extended" // Used to prevent truncating tweets
-          //     }),
+          //   "GET",
+          //   "statuses/user_timeline.json",
+          //   options: {
+          //     "user_id": "19025957",
+          //     "screen_name": "TTCnotices",
+          //     "count": "20",
+          //     "trim_user": "true",
+          //     // "exclude_replies": "true",
+          //     "tweet_mode": "extended" // Used to prevent truncating tweets
+          //   },
+          // ),
           future: Future.delayed(Duration(seconds: 20), () => 'Large Latte'),
           builder: (context, snapshot) {
             // print(snapshot.data.body);
@@ -159,7 +162,8 @@ class FeedPage extends StatelessWidget {
               return LoadingIndicator();
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               print("waiting");
-              return LoadingIndicator();
+              return LoadingIndicator(Colors.amber);
+              // return LoadingIndicator();
             } else {
               return ErrorWidget("Something went wrong");
             }

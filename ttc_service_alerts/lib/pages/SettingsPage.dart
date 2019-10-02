@@ -4,7 +4,10 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Icon(Icons.notifications_active),
+      child: Icon(
+        Icons.notifications_active,
+        size: 45,
+      ),
     );
   }
 }
