@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
-import '../components/ListItem.dart';
+import 'package:ttc_service_alerts/mockTwitterData.dart';
+import '../components/TweetItem.dart';
 
 import '../config/keys.dart';
 import '../classes/TwitterOauth.dart';
@@ -15,72 +18,71 @@ class FeedPage extends StatelessWidget {
 
   // var _sinceId;
 
-  final _tweets = [
-    ListItem(
-        "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
-        "32 Eglinton West",
-        "8m",
-        "1"),
-    ListItem(
-        "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
-        "506 Carlton",
-        "17m",
-        "1"),
-    ListItem(
-        "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
-        "Line 2 Bloor-Danforth",
-        "35m",
-        "1"),
-    ListItem("Detour via Birchmo unt Rd and Foxridge Dr due to a collision.",
-        "68 Warden", "1h", "1"),
-    ListItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
-        "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
-    ListItem(
-        "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
-        "32 Eglinton West",
-        "8m",
-        "1"),
-    ListItem(
-        "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
-        "506 Carlton",
-        "17m",
-        "1"),
-    ListItem(
-        "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
-        "Line 2 Bloor-Danforth",
-        "35m",
-        "1"),
-    ListItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
-        "68 Warden", "1h", "1"),
-    ListItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
-        "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
-    ListItem(
-        "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
-        "32 Eglinton West",
-        "8m",
-        "1"),
-    ListItem(
-        "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
-        "506 Carlton",
-        "17m",
-        "1"),
-    ListItem(
-        "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
-        "Line 2 Bloor-Danforth",
-        "35m",
-        "1"),
-    ListItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
-        "68 Warden", "1h", "1"),
-    ListItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
-        "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
-    Icon(Icons.directions_transit),
-    Icon(Icons.subway),
-    Icon(Icons.directions_bus),
-    Icon(Icons.directions_railway),
-
-    Icon(Icons.info),
-    Icon(Icons.info_outline),
-  ];
+  List<Widget> _tweets = [];
+    // TweetItem(
+    //     "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
+    //     "32 Eglinton West",
+    //     "8m",
+    //     "1"),
+    // TweetItem(
+    //     "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
+    //     "506 Carlton",
+    //     "17m",
+    //     "1"),
+    // TweetItem(
+    //     "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
+    //     "Line 2 Bloor-Danforth",
+    //     "35m",
+    //     "1"),
+    // TweetItem("Detour via Birchmo unt Rd and Foxridge Dr due to a collision.",
+    //     "68 Warden", "1h", "1"),
+    // TweetItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
+    //     "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
+    // TweetItem(
+    //     "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
+    //     "32 Eglinton West",
+    //     "8m",
+    //     "1"),
+    // TweetItem(
+    //     "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
+    //     "506 Carlton",
+    //     "17m",
+    //     "1"),
+    // TweetItem(
+    //     "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
+    //     "Line 2 Bloor-Danforth",
+    //     "35m",
+    //     "1"),
+    // TweetItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
+    //     "68 Warden", "1h", "1"),
+    // TweetItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
+    //     "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
+    // TweetItem(
+    //     "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
+    //     "32 Eglinton West",
+    //     "8m",
+    //     "1"),
+    // TweetItem(
+    //     "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
+    //     "506 Carlton",
+    //     "17m",
+    //     "1"),
+    // TweetItem(
+    //     "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
+    //     "Line 2 Bloor-Danforth",
+    //     "35m",
+    //     "1"),
+    // TweetItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
+    //     "68 Warden", "1h", "1"),
+    // TweetItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
+    //     "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
+  //   Icon(Icons.directions_transit),
+  //   Icon(Icons.subway),
+  //   Icon(Icons.directions_bus),
+  //   Icon(Icons.directions_railway),
+  //   Icon(Icons.info),
+  //   Icon(Icons.info_outline),
+  // ];
 
   // FeedPage() {
   //   // Making the request to twitter
@@ -110,12 +112,38 @@ class FeedPage extends StatelessWidget {
   //   );
   // }
 
+  /// This function takes a list of maps of tweets. It then inserts those tweets 
+  /// into the list.
+  insertTweets(String tweetsString) {
+    // Decode the string into a map
+    var tweets = json.decode(tweetsString).toList();
+
+    // The list of tweets that will be added into the list of tweets to display
+    // List<TweetItem> tweetList = [];
+    List<Widget> tweetList = [];
+
+    // Loop through the list of incoming tweets
+    for(var i = 0; i < tweets.length; i++) {
+      // For each incoming tweet, create a tweetItem
+      tweetList.add(TweetItem(tweets[i]));
+    }
+
+    // TODO Figure out if it would be better to just sort it
+    // Create a new list with the new tweets at the front
+    tweetList.addAll(_tweets);
+    return tweetList;
+
+    // Insert the tweet item into the list of tweets
+    // setState(() {
+    //   _tweets.insert(0, tweetItem);
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: RefreshIndicator(
         onRefresh: () {
-          print("refreshed");
 
           // // Making the request to twitter
           // _twitterOauth.getTwitterRequest(
@@ -131,7 +159,7 @@ class FeedPage extends StatelessWidget {
           //   }
           // );
           // // return fetchPost();
-          return Future.delayed(Duration(seconds: 20), () => 'Large Latte');
+          return Future.delayed(Duration(seconds: 3), () => 'Large Latte');
         },
         child: FutureBuilder(
           // future: _twitterOauth.getTwitterRequest(
@@ -146,33 +174,31 @@ class FeedPage extends StatelessWidget {
           //     "tweet_mode": "extended" // Used to prevent truncating tweets
           //   },
           // ),
-          future: Future.delayed(Duration(seconds: 20), () => 'Large Latte'),
+          future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
           builder: (context, snapshot) {
-            // print(snapshot.data.body);
             if (snapshot.hasError) {
-              print("Error");
-              return ErrorWidget("Something went wrong");
+              // TODO Better error handling. Keep trying to refresh while error
+              return Center(
+                child: Text("Snapshot error: Please try again"),
+              );
             }
             if (snapshot.connectionState == ConnectionState.done) {
               return ListView(children: () {
-                return this._tweets;
+                // Add the tweets to the list of tweets to display
+                return insertTweets(json.encode(mockTwitterData));
+                // return insertTweets(snapshot.data.body);
               }());
             } else if (snapshot.connectionState == ConnectionState.active) {
-              print("active");
               return LoadingIndicator();
             } else if (snapshot.connectionState == ConnectionState.waiting) {
-              print("waiting");
-              return LoadingIndicator(Colors.amber);
-              // return LoadingIndicator();
+              return LoadingIndicator();
             } else {
-              return ErrorWidget("Something went wrong");
+              // TODO Better error handling. Keep trying to refresh while error
+              return Center(
+                child: Text("No result error: Please try again"),
+              );
             }
           },
-          //         child: ListView(
-          //   children: () {
-          //     return this._tweets;
-          //   }()
-          // ),
         ),
       ),
     );

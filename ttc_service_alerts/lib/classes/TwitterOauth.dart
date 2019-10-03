@@ -139,10 +139,8 @@ class TwitterOauth {
 
     // Create the nonce
     _oauth_nonce = _generateNonce();
-    _oauth_nonce = "gEloXVNGoiHylinMGfUXKJBsTMKCZFwyGjbc";
     // Get the current timestamp. Convert from milliseconds to seconds
     _oauth_timestamp = (new DateTime.now().millisecondsSinceEpoch/1000).floor().toString();
-    _oauth_timestamp = 1569798108.toString();
     // Get the signature
     _oauth_signature = _generateSignature(method, url, options);
 

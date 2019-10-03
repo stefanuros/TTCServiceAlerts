@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class LoadingIndicator extends StatefulWidget {
-  final Color _colour; // ignore: unused_field
+import 'package:ttc_service_alerts/config/config.dart';
 
-  LoadingIndicator([this._colour = Colors.red]);
+  /// This class is used to create a custom loading indicator
+class LoadingIndicator extends StatefulWidget {
+
+  /// This class is used to create a custom loading indicator
+  LoadingIndicator();
 
   @override
   _LoadingIndicatorState createState() => _LoadingIndicatorState();
@@ -13,19 +16,15 @@ class LoadingIndicator extends StatefulWidget {
 class _LoadingIndicatorState extends State<LoadingIndicator>
     with TickerProviderStateMixin {
   AnimationController _controller;
-  Color _colour; // ignore: unused_field
-  int _duration = 5000;
 
-  _LoadingIndicatorState({color = Colors.red, duration = 8000}) {
-    this._colour = color;
-    this._duration = duration;
-
-  }
+  /// The duration of one loop of the animation
+  static const _duration = 5000;
 
   @override
   void initState() {
     super.initState();
 
+    // Creating the controller for the animation
     _controller = AnimationController(
       duration: Duration(
         milliseconds: _duration,
@@ -42,10 +41,11 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
 
   Future<void> _startAnimation() async {
     try {
+      // Start, and repeat, the animation
       await _controller.repeat().orCancel;
     } on TickerCanceled {
-      // the animation got canceled, probably because we were disposed
-      print("Animation Failed");
+      // If this is reached, the animation is ended, probably because it was not
+      // Needed anymore
     }
   }
 
@@ -64,10 +64,22 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
 }
 
 class _AnimatedIcon extends StatelessWidget {
+  /// The type of curve for transitions
   static const _curveType = Curves.elasticInOut;
 
+  /// How much relative weight the icons are given
   static const _iconWeight = 0.25;
+  /// How much relative weight the rotation transitions are given
   static const _rotationWeight = 0.25;
+
+  /// This is the animation controller
+  final Animation<double> controller;
+  /// This animation controls the icon currently being displayed in the loading 
+  /// indicator
+  final Animation<IconData> icon;
+  /// This animation controls the rotation value of the loading indicator
+  /// It is used to specify how rotated the icon is at any given time
+  final Animation<double> rotation;
 
   _AnimatedIcon({Key key, this.controller})
       : icon = TweenSequence([
@@ -150,10 +162,6 @@ class _AnimatedIcon extends StatelessWidget {
         ]).animate(controller),
         super(key: key);
 
-  final Animation<double> controller;
-  final Animation<IconData> icon;
-  final Animation<double> rotation;
-
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -164,7 +172,7 @@ class _AnimatedIcon extends StatelessWidget {
             angle: rotation.value,
             child: Icon(
               icon.value,
-              size: 45,
+              size: loadingIconSize,
             ),
           ),
         );
