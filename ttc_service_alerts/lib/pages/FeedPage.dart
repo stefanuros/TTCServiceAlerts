@@ -116,7 +116,7 @@ class FeedPage extends StatelessWidget {
   /// into the list.
   insertTweets(String tweetsString) {
     // Decode the string into a map
-    var tweets = json.decode(tweetsString).toList();
+    var tweets = json.decode(tweetsString);
 
     // The list of tweets that will be added into the list of tweets to display
     // List<TweetItem> tweetList = [];
