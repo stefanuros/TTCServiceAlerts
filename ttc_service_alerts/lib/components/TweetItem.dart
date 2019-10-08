@@ -4,7 +4,11 @@ import 'package:ttc_service_alerts/config/ttcInfo.dart';
 
 /// This class is a tweet list item
 // TODO Add error checking if something goes wrong
-class TweetItem extends StatelessWidget {
+// TODO Add icon grouping based on type of public transit
+
+// TODO CHeck this tweet for issues
+// Subway service will run all night on Lines 1, 2 & 3 for @nuitblancheTO. The 509 Harbourfront and 511 Bathurst will also be extended.6 Bay,121 Fort-York Esplanade & 501/301 Queen will be on diversion to accommodate the event. Visit https://bit.ly/2oExjif for more info #nbTO19
+class TweetItem extends StatelessWidget { 
   /// The id of the tweet
   String _tweetId;
 
@@ -21,7 +25,7 @@ class TweetItem extends StatelessWidget {
   List<Map> _chipText;
 
   /// The icon that will be shown
-  var _icon;
+  IconData _icon;
 
   /// This class is a tweet list item
   TweetItem(tweetMap) {
@@ -31,8 +35,8 @@ class TweetItem extends StatelessWidget {
     // Create a formatter for this datetime
     // Wed Oct 02 23:28:13 +0000 2019
     // * Removing the timezone with substring
-    // var f = new DateFormat('EEE MMM dd HH:mm:ss ZZZZ yyyy');
     var f = new DateFormat('EEE MMM dd HH:mm:ss yyyy');
+
     // Use the formatter to parse the datetime
     _dateTime = f
         .parse(
@@ -168,7 +172,7 @@ class TweetItem extends StatelessWidget {
     } 
     // Checking regular bus routes
     else if (line >= 5 && line <= 176) {
-      info["colour"] = Colors.red[400];
+      info["colour"] = Colors.red ;
       info["icon"] = Icons.directions_bus;
     } 
     // Checking Express Routes
@@ -179,7 +183,7 @@ class TweetItem extends StatelessWidget {
     // Checking All Night Streetcar Routes
     else if (line == 301 || line == 304 || line == 306 || line == 310) {
       info["colour"] = Colors.blueAccent;
-      info["icon"] = Icons.directions_bus;
+      info["icon"] = Icons.directions_railway;
     } 
     // Checking Blue Night Routes
     else if (line >= 300 && line <= 396) {
@@ -193,11 +197,11 @@ class TweetItem extends StatelessWidget {
     } 
     // Checking Streetcar Routes
     else if (line >= 501 && line <= 512) {
-      info["colour"] = Colors.red[400];
-      info["icon"] = Icons.directions_bus;
+      info["colour"] = Colors.red;
+      info["icon"] = Icons.directions_railway;
     } 
     else {
-      info["colour"] = Colors.red[400];
+      info["colour"] = Colors.red;
       info["icon"] = Icons.directions_bus;
     }
 
