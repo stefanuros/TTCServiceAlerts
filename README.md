@@ -34,4 +34,5 @@ Current next steps are:
 ## Screenshots
 
 * V 0.1
+
 ![Screenshot of Version 0.1](/assets/v_0_1.gif)
