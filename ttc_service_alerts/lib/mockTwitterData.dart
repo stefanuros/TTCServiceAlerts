@@ -1,6 +1,89 @@
 var mockTwitterData = [
   {
     "created_at": "Wed Oct 02 23:28:13 +0000 2019",
+    "id": 1179538608740556801,
+    "id_str": "1179538608740556801",
+    "full_text":
+      "Subway service will run all night on Lines 1, 2 & 3 for @nuitblancheTO. The 509 Harbourfront and 511 Bathurst will also be extended. 6 Bay, 121 Fort-York Esplanade & 501/301 Queen will be on diversion to accommodate the event. Visit https://bit.ly/2oExjif for more info #nbTO19",
+    "truncated": false,
+    "display_text_range": [0, 161],
+    "entities": {
+      "hashtags": [],
+      "symbols": [],
+      "user_mentions": [],
+      "urls": [
+        {
+          "url": "https:\/\/t.co\/jPSDy5TW8Q",
+          "expanded_url":
+              "https:\/\/twitter.com\/TTCnotices\/status\/1179537904022016000",
+          "display_url": "twitter.com\/TTCnotices\/sta\u2026",
+          "indices": [138, 161]
+        }
+      ]
+    },
+    "source":
+        "\u003ca href=\"https:\/\/www.hootsuite.com\" rel=\"nofollow\"\u003eHootsuite Inc.\u003c\/a\u003e",
+    "in_reply_to_status_id": null,
+    "in_reply_to_status_id_str": null,
+    "in_reply_to_user_id": null,
+    "in_reply_to_user_id_str": null,
+    "in_reply_to_screen_name": null,
+    "user": {"id": 19025957, "id_str": "19025957"},
+    "geo": null,
+    "coordinates": null,
+    "place": null,
+    "contributors": null,
+    "is_quote_status": true,
+    "quoted_status_id": 1179537904022016000,
+    "quoted_status_id_str": "1179537904022016000",
+    "quoted_status_permalink": {
+      "url": "https:\/\/t.co\/jPSDy5TW8Q",
+      "expanded":
+          "https:\/\/twitter.com\/TTCnotices\/status\/1179537904022016000",
+      "display": "twitter.com\/TTCnotices\/sta\u2026"
+    },
+    "quoted_status": {
+      "created_at": "Wed Oct 02 23:25:25 +0000 2019",
+      "id": 1179537904022016000,
+      "id_str": "1179537904022016000",
+      "full_text":
+          "52 Lawrence West and 952 Lawrence West Express: Detour westbound via Culford Rd, Maple Leaf Dr and Jane St due to a collision.",
+      "truncated": false,
+      "display_text_range": [0, 126],
+      "entities": {
+        "hashtags": [],
+        "symbols": [],
+        "user_mentions": [],
+        "urls": []
+      },
+      "source":
+          "\u003ca href=\"https:\/\/www.hootsuite.com\" rel=\"nofollow\"\u003eHootsuite Inc.\u003c\/a\u003e",
+      "in_reply_to_status_id": null,
+      "in_reply_to_status_id_str": null,
+      "in_reply_to_user_id": null,
+      "in_reply_to_user_id_str": null,
+      "in_reply_to_screen_name": null,
+      "user": {"id": 19025957, "id_str": "19025957"},
+      "geo": null,
+      "coordinates": null,
+      "place": null,
+      "contributors": null,
+      "is_quote_status": false,
+      "retweet_count": 1,
+      "favorite_count": 1,
+      "favorited": false,
+      "retweeted": false,
+      "lang": "en"
+    },
+    "retweet_count": 0,
+    "favorite_count": 0,
+    "favorited": false,
+    "retweeted": false,
+    "possibly_sensitive": false,
+    "lang": "en"
+  },
+  {
+    "created_at": "Wed Oct 02 23:28:13 +0000 2019",
     "id": 1179538608740556800,
     "id_str": "1179538608740556800",
     "full_text":
