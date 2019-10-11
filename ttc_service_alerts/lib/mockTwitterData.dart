@@ -4,7 +4,7 @@ var mockTwitterData = [
     "id": 1179538608740556801,
     "id_str": "1179538608740556801",
     "full_text":
-      "Subway service will run all night on Lines 1, 2 & 3 for @nuitblancheTO. The 509 Harbourfront and 511 Bathurst will also be extended. 6 Bay, 121 Fort-York Esplanade & 501/301 Queen will be on diversion to accommodate the event. Visit https://bit.ly/2oExjif for more info #nbTO19",
+      "Subway service will run all night on 504A Lines 1, 2 & 3 for @nuitblancheTO. The 509 Harbourfront and 511 Bathurst will also be extended. 6 Bay, 121 Fort-York Esplanade & 501/301 Queen will be on diversion to accommodate the event. Visit https://bit.ly/2oExjif for more info #nbTO19",
     "truncated": false,
     "display_text_range": [0, 161],
     "entities": {

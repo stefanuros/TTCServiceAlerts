@@ -29,9 +29,15 @@ user should be notified of.
 
 Current next steps are:
 * Fixing any graphical bugs that are occuring
+  * ~~Chips would overflow, rather than wrap, when there were too many~~
+  * Moving Time of tweet to top right corner of the box
 * Adding functionality for swipe down to update
 
 ## Screenshots
+
+* V 0.2
+
+![Screenshot of Version 0.1](/assets/v_0_2.gif)
 
 * V 0.1
 
