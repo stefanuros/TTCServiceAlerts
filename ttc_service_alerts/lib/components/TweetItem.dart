@@ -65,6 +65,24 @@ class TweetItem extends StatelessWidget {
       return b["icon"].codePoint - a["icon"].codePoint;
     });
 
+    // Sort the line numbers
+    _chipText.sort((a, b) {
+      // If they are not the same icon, return a 0 to not sort them
+      if(b["icon"].codePoint - a["icon"].codePoint != 0) {
+        return 0;
+      }
+
+      // Strip all non numeric characters for comparing
+      // This deals with situations where line 504A appears, while this is a subline
+      // of line 504
+      final intRegex = RegExp(r'\d{1,3}');
+      int strippedA = int.parse(intRegex.stringMatch(a["text"]));
+      int strippedB = int.parse(intRegex.stringMatch(b["text"]));
+
+      // Sort based on the line number
+      return strippedA - strippedB;
+    });
+
     // Set the icon for each tweet as the first one from the list of lines
     if (_chipText.length > 0) {
       _icon = _chipText[0]["icon"];
@@ -154,8 +172,13 @@ class TweetItem extends StatelessWidget {
 
   /// Takes a String [s] which is a line number and gives data for that line
   Map _getChipInfo(s) {
+    // Strip all non numbers (for cases where the line is 504A which is a subset
+    // of line 504)
+    final intRegex = RegExp(r'\d{1,3}');
+    String strippedS = intRegex.stringMatch(s);
+
     // Convert the line to a number for easier comparison
-    int line = int.parse(s);
+    int line = int.parse(strippedS);
 
     Map info = {"text": s};
 
@@ -234,18 +257,16 @@ class TweetItem extends StatelessWidget {
     for (var i = 0; i < _chipText.length; i++) {
       chipWidgets.add(
         Padding(
-          padding: const EdgeInsets.only(right: 4.0),
-          child: Chip(
+          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+          child: Chip( 
             backgroundColor: _chipText[i]["colour"],
-            label: Center(
-              child: Padding(
-                padding: EdgeInsets.all(1),
-                child: Text(
-                  _chipText[i]["text"],
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
+            label: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 1),
+              child: Text(
+                _chipText[i]["text"],
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -265,19 +286,13 @@ class TweetItem extends StatelessWidget {
     if (_chipText.length <= 0) {
       return [
         Padding(
-          padding: const EdgeInsets.only(right: 4.0),
+          padding: const EdgeInsets.symmetric(horizontal: 2.0),
           child: Icon(Icons.info),
         ),
       ];
     }
 
-    IconData curIcon = _chipText[0]["icon"];
-    chipRow.add(
-      Padding(
-        padding: const EdgeInsets.only(right: 4.0),
-        child: Icon(curIcon),
-      ),
-    );
+    IconData curIcon;
 
     for (var i = 0; i < _chipText.length; i++) {
       // If the icon has switched, update the current icon and add it to the row
@@ -286,7 +301,7 @@ class TweetItem extends StatelessWidget {
 
         chipRow.add(
           Padding(
-            padding: const EdgeInsets.only(right: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
             child: Icon(curIcon),
           ),
         );
@@ -303,44 +318,31 @@ class TweetItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Card(
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
+                    Expanded(
+                      child: Wrap(
+                        runSpacing: -12.0,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: _createChipRows(),
-                        // children: [
-                        //   Padding(
-                        //     padding: const EdgeInsets.only(right: 4.0),
-                        //     child: Icon(_icon),
-                        //   ),
-                        //   ..._createChips(),
-                        //   Padding(
-                        //     padding: const EdgeInsets.only(right: 4.0),
-                        //     child: Icon(_icon),
-                        //   ),
-                        //   ..._createChips(),
-                        //   Padding(
-                        //     padding: const EdgeInsets.only(right: 4.0),
-                        //     child: Icon(_icon),
-                        //   ),
-                        //   ..._createChips(),
-                        // ],
                       ),
                     ),
                     // TODO Add min width for this box
-                    Expanded(child: Container()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        _howLongAgo + " ago",
-                        style: TextStyle(fontSize: 10),
+                    // Expanded(child: Container()),
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Text(
+                          _howLongAgo + " ago",
+                          style: TextStyle(fontSize: 10),
+                        ),
                       ),
                     ),
                   ],
@@ -348,7 +350,7 @@ class TweetItem extends StatelessWidget {
               ),
               Padding(
                 child: Text(_tweetText),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
               ),
             ],
           ),
