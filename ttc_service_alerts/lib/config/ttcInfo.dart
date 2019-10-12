@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// This class controls all TTC info that needs to be known
 
 /// This is the list of regular expressions that is used to prevent issues when
@@ -28,61 +26,3 @@ final List<RegExp> regLis = [
   RegExp(r'([Nn][Oo][Vv][Ee]?[Mm]?[Bb]?[Ee]?[Rr]? \d\d?)'), // Nov, November
   RegExp(r'([Dd][Ee][Cc][Ee]?[Mm]?[Bb]?[Ee]?[Rr]? \d\d?)'), // Dec, December
 ];
-
-/// This is the list of all of the lines in the TTC
-// const Map<String, Map> lineList = {
-//   "1": {
-//     "fullLineName": "Line 1 Younge-University",
-//     "shortName": "Line 1",
-//     "lineColour": Colors.amber,
-//     "lineIcon": Icons.subway
-//   },
-//   "2": {
-//     "fullLineName": "Line 2 Bloor Danforth",
-//     "shortName": "Line 2",
-//     "lineColour": Colors.green,
-//     "lineIcon": Icons.subway
-//   },
-//   "3": {
-//     "fullLineName": "Line 3 Scarborough",
-//     "shortName": "Line 3",
-//     "lineColour": Colors.blue,
-//     "lineIcon": Icons.subway
-//   },
-//   "4": {
-//     "fullLineName": "Line 4 Sheppard",
-//     "shortName": "Line 4",
-//     "lineColour": Colors.amber,
-//     "lineIcon": Icons.subway
-//   },
-//   "52": {
-//     "fullLineName": "52 Lawrence West",
-//     "shortName": "52",
-//     "lineColour": Colors.red,
-//     "lineIcon": Icons.subway
-//   },
-//   "952": {
-//     "fullLineName": "952 Lawrence West Express",
-//     "shortName": "952",
-//     "lineColour": Colors.red,
-//     "lineIcon": Icons.subway
-//   },
-//     "4": {
-//     "fullLineName": "Line 4 Sheppard",
-//     "shortName": "Line 4",
-//     "lineColour": Colors.amber,
-//     "lineIcon": Icons.subway
-//   },
-//     "4": {
-//     "fullLineName": "Line 4 Sheppard",
-//     "shortName": "Line 4",
-//     "lineColour": Colors.amber,
-//     "lineIcon": Icons.subway
-//   },
-//     "4": {
-//     "fullLineName": "Line 4 Sheppard",
-//     "shortName": "Line 4",
-//     "lineColour": Colors.amber,
-//     "lineIcon": Icons.subway
-//   },
-// };

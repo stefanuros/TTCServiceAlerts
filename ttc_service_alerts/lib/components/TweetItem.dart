@@ -4,11 +4,7 @@ import 'package:ttc_service_alerts/config/ttcInfo.dart';
 
 /// This class is a tweet list item
 // TODO Add error checking if something goes wrong
-// TODO Add icon grouping based on type of public transit
-
-// TODO CHeck this tweet for issues
-// Subway service will run all night on Lines 1, 2 & 3 for @nuitblancheTO. The 509 Harbourfront and 511 Bathurst will also be extended.6 Bay,121 Fort-York Esplanade & 501/301 Queen will be on diversion to accommodate the event. Visit https://bit.ly/2oExjif for more info #nbTO19
-class TweetItem extends StatelessWidget {
+class TweetItem extends StatelessWidget { //ignore: must_be_immutable
   /// The id of the tweet
   String _tweetId;
 
@@ -23,11 +19,6 @@ class TweetItem extends StatelessWidget {
 
   /// The transit line in question
   List<Map> _chipText;
-
-  /// The icons that will be shown
-  /// It is a list because it groups lines of different types together and each
-  /// different group will have a different icon
-  IconData _icon;
 
   /// This class is a tweet list item
   TweetItem(tweetMap) {
@@ -82,15 +73,6 @@ class TweetItem extends StatelessWidget {
       // Sort based on the line number
       return strippedA - strippedB;
     });
-
-    // Set the icon for each tweet as the first one from the list of lines
-    if (_chipText.length > 0) {
-      _icon = _chipText[0]["icon"];
-    }
-    // If there are no lines, set it as an info icon
-    else {
-      _icon = Icons.info;
-    }
   }
 
   /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
@@ -333,8 +315,6 @@ class TweetItem extends StatelessWidget {
                         children: _createChipRows(),
                       ),
                     ),
-                    // TODO Add min width for this box
-                    // Expanded(child: Container()),
                     Align(
                       alignment: Alignment.topCenter,
                       child: Padding(
