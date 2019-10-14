@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
 import 'package:ttc_service_alerts/mockTwitterData.dart';
 import '../components/TweetItem.dart';
@@ -18,188 +20,131 @@ class FeedPage extends StatelessWidget {
 
   // var _sinceId;
 
-  List<Widget> _tweets = [];
-    // TweetItem(
-    //     "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
-    //     "32 Eglinton West",
-    //     "8m",
-    //     "1"),
-    // TweetItem(
-    //     "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
-    //     "506 Carlton",
-    //     "17m",
-    //     "1"),
-    // TweetItem(
-    //     "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
-    //     "Line 2 Bloor-Danforth",
-    //     "35m",
-    //     "1"),
-    // TweetItem("Detour via Birchmo unt Rd and Foxridge Dr due to a collision.",
-    //     "68 Warden", "1h", "1"),
-    // TweetItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
-    //     "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
-    // TweetItem(
-    //     "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
-    //     "32 Eglinton West",
-    //     "8m",
-    //     "1"),
-    // TweetItem(
-    //     "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
-    //     "506 Carlton",
-    //     "17m",
-    //     "1"),
-    // TweetItem(
-    //     "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
-    //     "Line 2 Bloor-Danforth",
-    //     "35m",
-    //     "1"),
-    // TweetItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
-    //     "68 Warden", "1h", "1"),
-    // TweetItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
-    //     "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
-    // TweetItem(
-    //     "Detour eastbound via Scarlett Rd, East Dr and Jane St due to a collision at Eglinton and Scarlett.",
-    //     "32 Eglinton West",
-    //     "8m",
-    //     "1"),
-    // TweetItem(
-    //     "Turning back eastbound via Lansdowne Avenue while we fix a mechanical problem at Howard Park and Parkside.",
-    //     "506 Carlton",
-    //     "17m",
-    //     "1"),
-    // TweetItem(
-    //     "This Monday through Thursday, subway service between Greenwood and St George will end nightly at 11 PM for scheduled track work. Shuttle buses will run.",
-    //     "Line 2 Bloor-Danforth",
-    //     "35m",
-    //     "1"),
-    // TweetItem("Detour via Birchmount Rd and Foxridge Dr due to a collision.",
-    //     "68 Warden", "1h", "1"),
-    // TweetItem("Detour via Birchmount Rd and Danforth Ave due to a collision",
-    //     "9 Bellamy, 16 McCowan, 102 Markham Road", "1h", "1"),
-  //   Icon(Icons.directions_transit),
-  //   Icon(Icons.subway),
-  //   Icon(Icons.directions_bus),
-  //   Icon(Icons.directions_railway),
-  //   Icon(Icons.info),
-  //   Icon(Icons.info_outline),
-  // ];
+  // List<TweetItem> _tweets = [];
 
-  // FeedPage() {
-  //   // Making the request to twitter
-  //   Future twitterRequest = _twitterOauth
-  //       .getTwitterRequest("GET", "statuses/user_timeline.json", options: {
-  //     "user_id": "19025957",
-  //     "screen_name": "TTCnotices",
-  //     "count": "20",
-  //     "trim_user": "true",
-  //     // "exclude_replies": "true",
-  //     "tweet_mode": "extended" // Used to prevent truncating tweets
-  //   });
-
-  //   // Handle the future returned from the future builder
-  //   Widget f = FutureBuilder(
-  //     future: twitterRequest,
-  //     builder: (context, snapshot) {
-  //       // If the future is done
-  //       print("Here");
-  //       if (snapshot.connectionState == ConnectionState.done) {
-  //         print("Future Done");
-  //         print(context);
-  //         return Text("Done");
-  //       }
-  //       return Text("Not Done");
-  //     },
-  //   );
-  // }
-
-  /// This function takes a list of maps of tweets. It then inserts those tweets 
-  /// into the list.
-  insertTweets(String tweetsString) {
-    // Decode the string into a map
-    var tweets = json.decode(tweetsString);
-
-    // The list of tweets that will be added into the list of tweets to display
-    // List<TweetItem> tweetList = [];
-    List<Widget> tweetList = [];
-
-    // Loop through the list of incoming tweets
-    for(var i = 0; i < tweets.length; i++) {
-      // For each incoming tweet, create a tweetItem
-      tweetList.add(TweetItem(tweets[i]));
-    }
-
-    // TODO Figure out if it would be better to just sort it
-    // Create a new list with the new tweets at the front
-    tweetList.addAll(_tweets);
-    return tweetList;
-
-    // Insert the tweet item into the list of tweets
-    // setState(() {
-    //   _tweets.insert(0, tweetItem);
-    // });
+  FutureBuilder _createInitialTweetCardList() {
+    return FutureBuilder(
+      future: _twitterOauth.getTwitterRequest(
+        "GET",
+        "statuses/user_timeline.json",
+        options: {
+          "user_id": "19025957",
+          "screen_name": "TTCnotices",
+          "count": "20",
+          "trim_user": "true",
+          // "exclude_replies": "true",
+          "tweet_mode": "extended" // Used to prevent truncating tweets
+        },
+      ),
+      // future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          // TODO Better error handling. Keep trying to refresh while error
+          return Center(
+            child: Text("Snapshot error: Please try again"),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          // Add the tweets to the list of tweets to display
+          // var tweetList = TweetUtil.createTweetList(json.encode(mockTwitterData));
+          var tweetList = TweetUtil.createTweetList(snapshot.data.body);
+          // Create the tweetCardList with the tweets
+          return TweetCardList(tweetList, _twitterOauth);
+        } else if (snapshot.connectionState == ConnectionState.active) {
+          return LoadingIndicator();
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return LoadingIndicator();
+        } else {
+          // TODO Better error handling. Keep trying to refresh while error
+          return Center(
+            child: Text("No result error: Please try again"),
+          );
+        }
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: RefreshIndicator(
-        onRefresh: () {
+    return _createInitialTweetCardList();
+  }
+}
 
-          // // Making the request to twitter
-          // _twitterOauth.getTwitterRequest(
-          //   "GET",
-          //   "statuses/user_timeline.json",
-          //   options: {
-          //     "user_id": "19025957",
-          //     "screen_name": "TTCnotices",
-          //     "count": "20",
-          //     "trim_user": "true",
-          //     "exclude_replies": "true",
-          //     "tweet_mode": "extended" // Used to prevent truncating tweets
-          //   }
-          // );
-          // // return fetchPost();
-          return Future.delayed(Duration(seconds: 3), () => 'Refresh');
-        },
-        child: FutureBuilder(
-          // future: _twitterOauth.getTwitterRequest(
-          //   "GET",
-          //   "statuses/user_timeline.json",
-          //   options: {
-          //     "user_id": "19025957",
-          //     "screen_name": "TTCnotices",
-          //     "count": "20",
-          //     "trim_user": "true",
-          //     // "exclude_replies": "true",
-          //     "tweet_mode": "extended" // Used to prevent truncating tweets
-          //   },
-          // ),
-          future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              // TODO Better error handling. Keep trying to refresh while error
-              return Center(
-                child: Text("Snapshot error: Please try again"),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.done) {
-              return ListView(children: () {
-                // Add the tweets to the list of tweets to display
-                return insertTweets(json.encode(mockTwitterData));
-                // return insertTweets(snapshot.data.body);
-              }());
-            } else if (snapshot.connectionState == ConnectionState.active) {
-              return LoadingIndicator();
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingIndicator();
-            } else {
-              // TODO Better error handling. Keep trying to refresh while error
-              return Center(
-                child: Text("No result error: Please try again"),
-              );
-            }
-          },
-        ),
+/// The widget in charge of updating the list of tweets when the list is refreshed
+class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
+  /// This is the list of tweets that will be displayed
+  /// The initial list is gerated outside of this object and is passed in as an
+  /// initial value
+  /// Refreshing the page adds tweets to this list
+  List<TweetItem> _tweets;
+  /// This is the most recent tweet that was fetched. This is used for refreshing
+  /// the page. Any new tweets that are fetched are tweets that occur after this
+  /// tweet
+  String _mostRecentTweet;
+  /// The twitter request class
+  final _twitterOauth;
+
+  TweetCardList(this._tweets, this._twitterOauth) {
+    // Set the most recent tweetID from the info that is passed in
+    if(_tweets.length > 0) {
+      _mostRecentTweet = _tweets[0].tweetId;
+    }
+    else {
+      _mostRecentTweet = null;
+    }
+  }
+
+  @override
+  _TweetCardListState createState() => _TweetCardListState();
+}
+
+class _TweetCardListState extends State<TweetCardList> {
+
+  Future<Null> _refreshHandler() async {
+
+    // Setting the options for the request
+    Map<String, String> opt = {
+      "user_id": "19025957",
+      "screen_name": "TTCnotices",
+      "count": "20",
+      "trim_user": "true",
+      "exclude_replies": "true",
+      "tweet_mode": "extended" // Used to prevent truncating tweets
+    };
+
+    // If a most recent tweet exists, add it as a parameter to the request
+    if(widget._mostRecentTweet != null) {
+      opt["since_id"] = widget._mostRecentTweet.toString();
+    }
+
+    // Make the request for the updated tweets
+    Response res = await widget._twitterOauth.getTwitterRequest(
+      "GET",
+      "statuses/user_timeline.json",
+      options: opt,
+    );
+
+    // Create the new tweet items
+    List<TweetItem> newTweetItems = TweetUtil.createTweetList(res.body);
+
+    // Add the new tweets to the front of the _tweets list
+    setState(() {
+      widget._tweets = [...newTweetItems, ...widget._tweets];
+
+      if(newTweetItems.length > 0) {
+        widget._mostRecentTweet = newTweetItems[0].tweetId;
+      }
+    });
+
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: _refreshHandler,
+      child: ListView(
+        children: widget._tweets,
       ),
     );
   }
