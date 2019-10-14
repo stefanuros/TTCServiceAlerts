@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 import 'package:ttc_service_alerts/config/ttcInfo.dart';
+import 'package:ttc_service_alerts/config/config.dart';
 
 /// This class is a tweet list item
 // TODO Add error checking if something goes wrong
-class TweetItem extends StatelessWidget { //ignore: must_be_immutable
+class TweetItem extends StatelessWidget {
+  //ignore: must_be_immutable
   /// The id of the tweet
   String _tweetId;
 
@@ -23,7 +26,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
   /// This class is a tweet list item
   TweetItem(tweetMap) {
     _tweetId = tweetMap["id_str"];
-    _tweetText = tweetMap["full_text"];
+    _tweetText = HtmlUnescape().convert(tweetMap["full_text"]);
 
     // Create a formatter for this datetime
     // Wed Oct 02 23:28:13 +0000 2019
@@ -59,7 +62,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     // Sort the line numbers
     _chipText.sort((a, b) {
       // If they are not the same icon, return a 0 to not sort them
-      if(b["icon"].codePoint - a["icon"].codePoint != 0) {
+      if (b["icon"].codePoint - a["icon"].codePoint != 0) {
         return 0;
       }
 
@@ -90,6 +93,11 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     // The unit for the time
     String unit = "m";
 
+    // If the time was 0 minutes ago, change the text to "Now"
+    if(diff == 0) {
+      return "Now";
+    }
+
     // Getting the number of hours
     if (diff >= 60 && unit == "m") {
       unit = "h";
@@ -117,7 +125,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     }
 
     // Putting the ending on the unit and returning it
-    return diff.toString() + unit;
+    return diff.toString() + unit  + " ago";
   }
 
   /// This function takes the tweet text and
@@ -244,14 +252,23 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
       chipWidgets.add(
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          child: Chip( 
-            backgroundColor: _chipText[i]["colour"],
-            label: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 1),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 4.0,
+                color: _chipText[i]["colour"],
+              ),
+              borderRadius: BorderRadius.all(
+                Radius.circular(30),
+              ),
+            ),
+            // backgroundColor: _chipText[i]["colour"],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Text(
                 _chipText[i]["text"],
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: chipFontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -309,12 +326,13 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10,),
                 child: Row(
                   children: <Widget>[
                     Expanded(
                       child: Wrap(
-                        runSpacing: -12.0,
+                        // runSpacing: -12.0,
+                        runSpacing: 4.0,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: _createChipRows(),
                       ),
@@ -324,8 +342,8 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text(
-                          _howLongAgo + " ago",
-                          style: TextStyle(fontSize: 10),
+                          _howLongAgo,
+                          style: TextStyle(fontSize: timeFontSize),
                         ),
                       ),
                     ),
@@ -333,8 +351,17 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
                 ),
               ),
               Padding(
-                child: Text(_tweetText),
-                padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 10.0),
+                child: Text(
+                  _tweetText,
+                  style: TextStyle(
+                    fontSize: tweetFontSize,
+                  ),
+                ),
+                padding: EdgeInsets.only(
+                  left: 15.0,
+                  right: 15.0,
+                  bottom: 15.0,
+                ),
               ),
             ],
           ),
