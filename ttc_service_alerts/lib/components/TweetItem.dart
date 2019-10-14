@@ -75,6 +75,10 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     });
   }
 
+  String get tweetId {
+    return _tweetId;
+  }
+
   /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
   String _getTimeFrom(DateTime tweetTime) {
     // Current DateTime

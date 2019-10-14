@@ -7,7 +7,7 @@ import 'package:ttc_service_alerts/components/TweetItem.dart';
 class TweetUtil {
   /// This function takes a list of maps of tweets. It then inserts those tweets
   /// into the list.
-  static createTweetList(String tweetsString) {
+  static List<TweetItem> createTweetList(String tweetsString) {
     // Decode the string into a map
     var tweets = json.decode(tweetsString);
 

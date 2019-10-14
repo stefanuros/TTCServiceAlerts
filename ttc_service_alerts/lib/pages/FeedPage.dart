@@ -76,7 +76,15 @@ class FeedPage extends StatelessWidget {
 
 /// The widget in charge of updating the list of tweets when the list is refreshed
 class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
+  /// This is the list of tweets that will be displayed
+  /// The initial list is gerated outside of this object and is passed in as an
+  /// initial value
+  /// Refreshing the page adds tweets to this list
   List<TweetItem> _tweets;
+  /// This is the most recent tweet that was fetched. This is used for refreshing
+  /// the page. Any new tweets that are fetched are tweets that occur after this
+  /// tweet
+  String _mostRecentTweet;
 
   TweetCardList(this._tweets);
 
@@ -85,6 +93,7 @@ class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
 }
 
 class _TweetCardListState extends State<TweetCardList> {
+
   Future<Null> _refreshHandler() async {
     // // Making the request to twitter
     // _twitterOauth.getTwitterRequest(
@@ -100,7 +109,17 @@ class _TweetCardListState extends State<TweetCardList> {
     //   }
     // );
     // // return fetchPost();
-    await Future.delayed(Duration(seconds: 3), () => 'Refresh');
+    
+    await Future.delayed(Duration(seconds: 1), () => 'Refresh');
+
+    // Create the new tweet items
+    List<TweetItem> newTweetItems = TweetUtil.createTweetList(json.encode(mockTwitterRefreshData));
+
+    // Add the new tweets to the front of the _tweets list
+    setState(() {
+      widget._tweets = [...newTweetItems, ...widget._tweets];
+    });
+
     return null;
   }
 
