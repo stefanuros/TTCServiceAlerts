@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 import 'package:ttc_service_alerts/config/ttcInfo.dart';
 import 'package:ttc_service_alerts/config/config.dart';
@@ -25,7 +26,7 @@ class TweetItem extends StatelessWidget {
   /// This class is a tweet list item
   TweetItem(tweetMap) {
     _tweetId = tweetMap["id_str"];
-    _tweetText = tweetMap["full_text"];
+    _tweetText = HtmlUnescape().convert(tweetMap["full_text"]);
 
     // Create a formatter for this datetime
     // Wed Oct 02 23:28:13 +0000 2019
@@ -92,6 +93,11 @@ class TweetItem extends StatelessWidget {
     // The unit for the time
     String unit = "m";
 
+    // If the time was 0 minutes ago, change the text to "Now"
+    if(diff == 0) {
+      return "Now";
+    }
+
     // Getting the number of hours
     if (diff >= 60 && unit == "m") {
       unit = "h";
@@ -119,7 +125,7 @@ class TweetItem extends StatelessWidget {
     }
 
     // Putting the ending on the unit and returning it
-    return diff.toString() + unit;
+    return diff.toString() + unit  + " ago";
   }
 
   /// This function takes the tweet text and
@@ -336,7 +342,7 @@ class TweetItem extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text(
-                          _howLongAgo + " ago",
+                          _howLongAgo,
                           style: TextStyle(fontSize: timeFontSize),
                         ),
                       ),
@@ -352,9 +358,9 @@ class TweetItem extends StatelessWidget {
                   ),
                 ),
                 padding: EdgeInsets.only(
-                  left: 10.0,
-                  right: 10.0,
-                  bottom: 10.0,
+                  left: 15.0,
+                  right: 15.0,
+                  bottom: 15.0,
                 ),
               ),
             ],

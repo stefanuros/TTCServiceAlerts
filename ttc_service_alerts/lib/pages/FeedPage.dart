@@ -28,7 +28,7 @@ class FeedPage extends StatelessWidget {
           "screen_name": "TTCnotices",
           "count": "20",
           "trim_user": "true",
-          // "exclude_replies": "true",
+          "exclude_replies": "true",
           "tweet_mode": "extended" // Used to prevent truncating tweets
         },
       ),
