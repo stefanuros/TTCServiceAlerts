@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
 import 'package:ttc_service_alerts/mockTwitterData.dart';
@@ -23,19 +24,19 @@ class FeedPage extends StatelessWidget {
 
   FutureBuilder _createInitialTweetCardList() {
     return FutureBuilder(
-      // future: _twitterOauth.getTwitterRequest(
-      //   "GET",
-      //   "statuses/user_timeline.json",
-      //   options: {
-      //     "user_id": "19025957",
-      //     "screen_name": "TTCnotices",
-      //     "count": "20",
-      //     "trim_user": "true",
-      //     // "exclude_replies": "true",
-      //     "tweet_mode": "extended" // Used to prevent truncating tweets
-      //   },
-      // ),
-      future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
+      future: _twitterOauth.getTwitterRequest(
+        "GET",
+        "statuses/user_timeline.json",
+        options: {
+          "user_id": "19025957",
+          "screen_name": "TTCnotices",
+          "count": "20",
+          "trim_user": "true",
+          // "exclude_replies": "true",
+          "tweet_mode": "extended" // Used to prevent truncating tweets
+        },
+      ),
+      // future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           // TODO Better error handling. Keep trying to refresh while error
@@ -45,9 +46,10 @@ class FeedPage extends StatelessWidget {
         }
         if (snapshot.connectionState == ConnectionState.done) {
           // Add the tweets to the list of tweets to display
-          var tweetList = TweetUtil.createTweetList(json.encode(mockTwitterData));
+          // var tweetList = TweetUtil.createTweetList(json.encode(mockTwitterData));
+          var tweetList = TweetUtil.createTweetList(snapshot.data.body);
           // Create the tweetCardList with the tweets
-          return TweetCardList(tweetList);
+          return TweetCardList(tweetList, _twitterOauth);
         } else if (snapshot.connectionState == ConnectionState.active) {
           return LoadingIndicator();
         } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -64,12 +66,6 @@ class FeedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //   child: RefreshIndicator(
-    //     onRefresh: _refreshHandler,
-    //     child: _getInitialTweets(),
-    //   ),
-    // );
     return _createInitialTweetCardList();
   }
 }
@@ -85,8 +81,18 @@ class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
   /// the page. Any new tweets that are fetched are tweets that occur after this
   /// tweet
   String _mostRecentTweet;
+  /// The twitter request class
+  final _twitterOauth;
 
-  TweetCardList(this._tweets);
+  TweetCardList(this._tweets, this._twitterOauth) {
+    // Set the most recent tweetID from the info that is passed in
+    if(_tweets.length > 0) {
+      _mostRecentTweet = _tweets[0].tweetId;
+    }
+    else {
+      _mostRecentTweet = null;
+    }
+  }
 
   @override
   _TweetCardListState createState() => _TweetCardListState();
@@ -95,29 +101,39 @@ class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
 class _TweetCardListState extends State<TweetCardList> {
 
   Future<Null> _refreshHandler() async {
-    // // Making the request to twitter
-    // _twitterOauth.getTwitterRequest(
-    //   "GET",
-    //   "statuses/user_timeline.json",
-    //   options: {
-    //     "user_id": "19025957",
-    //     "screen_name": "TTCnotices",
-    //     "count": "20",
-    //     "trim_user": "true",
-    //     "exclude_replies": "true",
-    //     "tweet_mode": "extended" // Used to prevent truncating tweets
-    //   }
-    // );
-    // // return fetchPost();
-    
-    await Future.delayed(Duration(seconds: 1), () => 'Refresh');
+
+    // Setting the options for the request
+    Map<String, String> opt = {
+      "user_id": "19025957",
+      "screen_name": "TTCnotices",
+      "count": "20",
+      "trim_user": "true",
+      "exclude_replies": "true",
+      "tweet_mode": "extended" // Used to prevent truncating tweets
+    };
+
+    // If a most recent tweet exists, add it as a parameter to the request
+    if(widget._mostRecentTweet != null) {
+      opt["since_id"] = widget._mostRecentTweet.toString();
+    }
+
+    // Make the request for the updated tweets
+    Response res = await widget._twitterOauth.getTwitterRequest(
+      "GET",
+      "statuses/user_timeline.json",
+      options: opt,
+    );
 
     // Create the new tweet items
-    List<TweetItem> newTweetItems = TweetUtil.createTweetList(json.encode(mockTwitterRefreshData));
+    List<TweetItem> newTweetItems = TweetUtil.createTweetList(res.body);
 
     // Add the new tweets to the front of the _tweets list
     setState(() {
       widget._tweets = [...newTweetItems, ...widget._tweets];
+
+      if(newTweetItems.length > 0) {
+        widget._mostRecentTweet = newTweetItems[0].tweetId;
+      }
     });
 
     return null;
