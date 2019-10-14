@@ -18,10 +18,6 @@ class FeedPage extends StatelessWidget {
       token: accessToken,
       tokenSecret: accessTokenSecret);
 
-  // var _sinceId;
-
-  // List<TweetItem> _tweets = [];
-
   FutureBuilder _createInitialTweetCardList() {
     return FutureBuilder(
       future: _twitterOauth.getTwitterRequest(
