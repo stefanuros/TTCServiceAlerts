@@ -326,7 +326,7 @@ class TweetItem extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10,),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10,),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -342,7 +342,7 @@ class TweetItem extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text(
-                          _howLongAgo,
+                          _getTimeFrom(_dateTime),
                           style: TextStyle(fontSize: timeFontSize),
                         ),
                       ),
