@@ -98,6 +98,11 @@ class _TweetCardListState extends State<TweetCardList> {
 
   Future<Null> _refreshHandler() async {
 
+    // Update the times for the current tweets
+    for(var i = 0; i < widget._tweets.length; i++) {
+      widget._tweets[i].updateTime();
+    }
+
     // Setting the options for the request
     Map<String, String> opt = {
       "user_id": "19025957",
