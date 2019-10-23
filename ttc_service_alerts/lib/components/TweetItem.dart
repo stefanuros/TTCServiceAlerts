@@ -7,7 +7,6 @@ import 'package:ttc_service_alerts/config/config.dart';
 /// This class is a tweet list item
 // TODO Add error checking if something goes wrong
 class TweetItem extends StatelessWidget { //ignore: must_be_immutable
-  //ignore: must_be_immutable
   /// The id of the tweet
   String _tweetId;
 
@@ -19,6 +18,8 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
 
   /// The transit line in question
   List<Map> _chipText;
+
+  TimeText _timeTextWidget;
 
   /// This class is a tweet list item
   TweetItem(tweetMap) {
@@ -70,6 +71,9 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
       // Sort based on the line number
       return strippedA - strippedB;
     });
+
+    // Create the widget that will be used for the time text
+    _timeTextWidget = TimeText(_dateTime);
   }
 
   String get tweetId {
@@ -88,7 +92,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     String unit = "m";
 
     // If the time was 0 minutes ago, change the text to "Now"
-    if(diff == 0) {
+    if (diff == 0) {
       return "Now";
     }
 
@@ -119,7 +123,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     }
 
     // Putting the ending on the unit and returning it
-    return diff.toString() + unit  + " ago";
+    return diff.toString() + unit + " ago";
   }
 
   /// This function takes the tweet text and
@@ -311,6 +315,11 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     return chipRow;
   }
 
+  /// This function updates the time text for this tweet
+  updateTime() {
+    _timeTextWidget.updateTime();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -320,7 +329,10 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10,),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 10,
+                ),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -335,10 +347,11 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Text(
-                          _getTimeFrom(_dateTime),
-                          style: TextStyle(fontSize: timeFontSize),
-                        ),
+                        // child: Text(
+                        //   _getTimeFrom(_dateTime),
+                        //   style: TextStyle(fontSize: timeFontSize),
+                        // ),
+                        child: _timeTextWidget,
                       ),
                     ),
                   ],
@@ -361,6 +374,85 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
           ),
         ),
       ),
+    );
+  }
+}
+
+class TimeText extends StatefulWidget { //ignore: must_be_immutable
+  /// The data and time of the tweet, used to calcualte how long ago it
+  /// was
+  final _dateTime;
+  /// The text that will be displayed in the tweet saying how long
+  /// ago the tweet occured
+  String _howLongAgo;
+
+  TimeText(this._dateTime) {
+    // Setting the initial value for the time text
+    _howLongAgo = _getTimeFrom(_dateTime);
+  }
+
+  /// This function updates the howLongAgo text for the tweet
+  Null updateTime() {
+    _howLongAgo = _getTimeFrom(_dateTime);
+  }
+
+    /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
+  String _getTimeFrom(DateTime tweetTime) {
+    // Current DateTime
+    DateTime now = DateTime.now();
+
+    // Find the difference between the 2 times
+    var diff = now.difference(tweetTime).inMinutes;
+
+    // The unit for the time
+    String unit = "m";
+
+    // If the time was 0 minutes ago, change the text to "Now"
+    if (diff == 0) {
+      return "Now";
+    }
+
+    // Getting the number of hours
+    if (diff >= 60 && unit == "m") {
+      unit = "h";
+      diff = (diff / 60).floor();
+    }
+    // Getting days
+    if (diff >= 24 && unit == "h") {
+      unit = "d";
+      diff = (diff / 24).floor();
+    }
+    // Getting weeks
+    if (diff >= 7 && unit == "w") {
+      unit = "w";
+      diff = (diff / 7).floor();
+    }
+    // Getting months
+    if (diff >= 4 && unit == "Mo") {
+      unit = "Mo";
+      diff = (diff / 4).floor();
+    }
+    // Getting years
+    if (diff >= 12 && unit == "y") {
+      unit = "y";
+      diff = (diff / 12).floor();
+    }
+
+    // Putting the ending on the unit and returning it
+    return diff.toString() + unit + " ago";
+  }
+
+  @override
+  _TimeTextState createState() => _TimeTextState();
+}
+
+class _TimeTextState extends State<TimeText> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      widget._howLongAgo,
+      style: TextStyle(fontSize: timeFontSize),
     );
   }
 }

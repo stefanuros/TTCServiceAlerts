@@ -118,7 +118,13 @@ class _TweetCardListState extends State<TweetCardList>
     super.dispose();
   }
 
+  /// This function is called when the scroll is pulled down to refresh
+  /// It fetches fresh tweets and updates the time of the tweets
   Future<Null> _refreshHandler() async {
+    // Update the times for the current tweets
+    for(var i = 0; i < widget._tweets.length; i++) {
+      widget._tweets[i].updateTime();
+    }
     // Setting the options for the request
     Map<String, String> opt = {
       "user_id": "19025957",
