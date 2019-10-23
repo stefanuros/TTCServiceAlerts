@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
-import 'package:ttc_service_alerts/mockTwitterData.dart';
 import '../components/TweetItem.dart';
 
 import '../config/keys.dart';
@@ -68,24 +65,26 @@ class FeedPage extends StatelessWidget {
 
 /// The widget in charge of updating the list of tweets when the list is refreshed
 class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
+  //ignore: must_be_immutable
   /// This is the list of tweets that will be displayed
   /// The initial list is gerated outside of this object and is passed in as an
   /// initial value
   /// Refreshing the page adds tweets to this list
   List<TweetItem> _tweets;
+
   /// This is the most recent tweet that was fetched. This is used for refreshing
   /// the page. Any new tweets that are fetched are tweets that occur after this
   /// tweet
   String _mostRecentTweet;
+
   /// The twitter request class
   final _twitterOauth;
 
   TweetCardList(this._tweets, this._twitterOauth) {
     // Set the most recent tweetID from the info that is passed in
-    if(_tweets.length > 0) {
+    if (_tweets.length > 0) {
       _mostRecentTweet = _tweets[0].tweetId;
-    }
-    else {
+    } else {
       _mostRecentTweet = null;
     }
   }
@@ -94,10 +93,32 @@ class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
   _TweetCardListState createState() => _TweetCardListState();
 }
 
-class _TweetCardListState extends State<TweetCardList> {
+class _TweetCardListState extends State<TweetCardList>
+    with WidgetsBindingObserver {
+  /// This function handles any lifecycle events, including leaving the app, and
+  /// then coming back to it.
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // If the state is resumed which happens when the app is reopened
+    if (state == AppLifecycleState.resumed) {
+      // Refresh the data
+      _refreshHandler();
+      print("res");
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   Future<Null> _refreshHandler() async {
-
     // Setting the options for the request
     Map<String, String> opt = {
       "user_id": "19025957",
@@ -109,7 +130,7 @@ class _TweetCardListState extends State<TweetCardList> {
     };
 
     // If a most recent tweet exists, add it as a parameter to the request
-    if(widget._mostRecentTweet != null) {
+    if (widget._mostRecentTweet != null) {
       opt["since_id"] = widget._mostRecentTweet.toString();
     }
 
@@ -127,7 +148,7 @@ class _TweetCardListState extends State<TweetCardList> {
     setState(() {
       widget._tweets = [...newTweetItems, ...widget._tweets];
 
-      if(newTweetItems.length > 0) {
+      if (newTweetItems.length > 0) {
         widget._mostRecentTweet = newTweetItems[0].tweetId;
       }
     });

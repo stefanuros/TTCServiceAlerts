@@ -6,7 +6,7 @@ import 'package:ttc_service_alerts/config/config.dart';
 
 /// This class is a tweet list item
 // TODO Add error checking if something goes wrong
-class TweetItem extends StatelessWidget {
+class TweetItem extends StatelessWidget { //ignore: must_be_immutable
   //ignore: must_be_immutable
   /// The id of the tweet
   String _tweetId;
@@ -16,9 +16,6 @@ class TweetItem extends StatelessWidget {
 
   /// The time of the tweet
   DateTime _dateTime;
-
-  /// How long ago the tweet was
-  String _howLongAgo;
 
   /// The transit line in question
   List<Map> _chipText;
@@ -46,9 +43,6 @@ class TweetItem extends StatelessWidget {
             hours: 4,
           ),
         );
-
-    // Get how long ago the tweet was, in minutes, hours, days, weeks, and months
-    _howLongAgo = _getTimeFrom(_dateTime);
 
     // Use Regex to find the affected lines in the tweet
     _chipText = _createChipText(_tweetText);
