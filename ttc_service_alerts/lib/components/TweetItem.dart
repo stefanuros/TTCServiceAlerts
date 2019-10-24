@@ -21,6 +21,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
   /// The transit line in question
   List<Map> _chipText;
 
+  // The time widget
   TimeText _timeTextWidget;
 
   /// This class is a tweet list item
@@ -80,52 +81,6 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
 
   String get tweetId {
     return _tweetId;
-  }
-
-  /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
-  String _getTimeFrom(DateTime tweetTime) {
-    // Current DateTime
-    DateTime now = DateTime.now();
-
-    // Find the difference between the 2 times
-    var diff = now.difference(tweetTime).inMinutes;
-
-    // The unit for the time
-    String unit = "m";
-
-    // If the time was 0 minutes ago, change the text to "Now"
-    if (diff == 0) {
-      return "Now";
-    }
-
-    // Getting the number of hours
-    if (diff >= 60 && unit == "m") {
-      unit = "h";
-      diff = (diff / 60).floor();
-    }
-    // Getting days
-    if (diff >= 24 && unit == "h") {
-      unit = "d";
-      diff = (diff / 24).floor();
-    }
-    // Getting weeks
-    if (diff >= 7 && unit == "w") {
-      unit = "w";
-      diff = (diff / 7).floor();
-    }
-    // Getting months
-    if (diff >= 4 && unit == "Mo") {
-      unit = "Mo";
-      diff = (diff / 4).floor();
-    }
-    // Getting years
-    if (diff >= 12 && unit == "y") {
-      unit = "y";
-      diff = (diff / 12).floor();
-    }
-
-    // Putting the ending on the unit and returning it
-    return diff.toString() + unit + " ago";
   }
 
   /// This function takes the tweet text and

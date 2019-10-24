@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:ttc_service_alerts/config/config.dart';
 
-class TimeText extends StatefulWidget { //ignore: must_be_immutable
+//ignore: must_be_immutable
+class TimeText extends StatefulWidget {
   /// The data and time of the tweet, used to calcualte how long ago it
   /// was
   final _dateTime;
+
   /// The text that will be displayed in the tweet saying how long
   /// ago the tweet occured
   String _howLongAgo;
+
 
   TimeText(this._dateTime) {
     // Setting the initial value for the time text
@@ -19,7 +22,7 @@ class TimeText extends StatefulWidget { //ignore: must_be_immutable
     _howLongAgo = _getTimeFrom(_dateTime);
   }
 
-    /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
+  /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
   String _getTimeFrom(DateTime tweetTime) {
     // Current DateTime
     DateTime now = DateTime.now();
@@ -70,7 +73,6 @@ class TimeText extends StatefulWidget { //ignore: must_be_immutable
 }
 
 class _TimeTextState extends State<TimeText> {
-
   @override
   Widget build(BuildContext context) {
     return Text(

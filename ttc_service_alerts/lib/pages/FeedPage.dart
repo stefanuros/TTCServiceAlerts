@@ -37,6 +37,7 @@ class FeedPage extends StatelessWidget {
           );
         }
         if (snapshot.connectionState == ConnectionState.done) {
+
           // Add the tweets to the list of tweets to display
           // var tweetList = TweetUtil.createTweetList(json.encode(mockTwitterData));
           var tweetList = TweetUtil.createTweetList(snapshot.data.body);

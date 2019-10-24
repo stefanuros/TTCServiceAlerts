@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -6,8 +7,8 @@ import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'TweetItem.dart';
 
 /// The widget in charge of updating the list of tweets when the list is refreshed
-class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
-  //ignore: must_be_immutable
+//ignore: must_be_immutable
+class TweetCardList extends StatefulWidget {
   /// This is the list of tweets that will be displayed
   /// The initial list is gerated outside of this object and is passed in as an
   /// initial value
@@ -21,6 +22,9 @@ class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
 
   /// The twitter request class
   final _twitterOauth;
+
+  // This is the timer for the tweet time being updated
+  Timer _timer;
 
   TweetCardList(this._tweets, this._twitterOauth) {
     // Set the most recent tweetID from the info that is passed in
@@ -37,6 +41,7 @@ class TweetCardList extends StatefulWidget { //ignore: must_be_immutable
 
 class _TweetCardListState extends State<TweetCardList>
     with WidgetsBindingObserver {
+
   /// This function handles any lifecycle events, including leaving the app, and
   /// then coming back to it.
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -44,18 +49,27 @@ class _TweetCardListState extends State<TweetCardList>
     if (state == AppLifecycleState.resumed) {
       // Refresh the data
       _refreshHandler();
-      print("res");
     }
   }
 
   @override
   initState() {
     super.initState();
+    // Used to add observer to watch app state (resumed, paused, etc)
     WidgetsBinding.instance.addObserver(this);
+
+    // Initialize the timer that will refresh the feed occasionally
+    // const duration = const Duration(minutes: 1);
+    // widget._timer = Timer.periodic(duration, (Timer t) {
+    //   _refreshHandler();
+    //   // Update the value to get a time update
+    //   print("In");
+    // });
   }
 
   @override
   void dispose() {
+    widget._timer.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -64,7 +78,7 @@ class _TweetCardListState extends State<TweetCardList>
   /// It fetches fresh tweets and updates the time of the tweets
   Future<Null> _refreshHandler() async {
     // Update the times for the current tweets
-    for(var i = 0; i < widget._tweets.length; i++) {
+    for (var i = 0; i < widget._tweets.length; i++) {
       widget._tweets[i].updateTime();
     }
     // Setting the options for the request
