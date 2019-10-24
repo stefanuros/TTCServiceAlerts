@@ -146,11 +146,13 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     Iterable<Match> matches = RegExp(r'\d{1,3}[A-Z]?').allMatches(s).toList();
 
     // TODO Remove duplicate lines
-    // Match the regex lines to the proper line names
     for (Match m in matches) {
       // Add a map with text to the list of lines
       lines.add(m.group(0).toString());
     }
+
+    // Remove any duplicates
+    lines = lines.toSet().toList();
 
     List<Map> chipInfo = [];
 
