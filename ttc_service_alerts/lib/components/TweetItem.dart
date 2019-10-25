@@ -102,7 +102,6 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
     List<String> lines = [];
     Iterable<Match> matches = RegExp(r'\d{1,3}[A-Z]?').allMatches(s).toList();
 
-    // TODO Remove duplicate lines
     for (Match m in matches) {
       // Add a map with text to the list of lines
       lines.add(m.group(0).toString());

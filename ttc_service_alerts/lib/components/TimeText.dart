@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:ttc_service_alerts/config/config.dart';
 
@@ -11,6 +13,8 @@ class TimeText extends StatefulWidget {
   /// ago the tweet occured
   String _howLongAgo;
 
+  // This timer controls the updates to the tweet time
+  Timer _timeUpdater;
 
   TimeText(this._dateTime) {
     // Setting the initial value for the time text
@@ -73,6 +77,49 @@ class TimeText extends StatefulWidget {
 }
 
 class _TimeTextState extends State<TimeText> {
+  @override
+  initState() {
+    super.initState();
+
+    // Initialize the timer that will refresh the feed occasionally
+    const duration = const Duration(minutes: tweetTimeUpdateMinutes);
+
+    // Only create a timer if the time is less than an hour. Anything more than
+    // an hour will be updated by refreshing the page, or by new tweets coming in
+    if (widget._howLongAgo != "Now" ||
+        widget._howLongAgo[widget._howLongAgo.length - 5] != "m") {
+      return;
+    }
+
+    widget._timeUpdater = Timer.periodic(duration, (Timer t) {
+      // Only sets the state if the widget is mounted (i.e. still exists in widget tree)
+      if (this.mounted) {
+        setState(() {
+          widget._howLongAgo = widget._getTimeFrom(widget._dateTime);
+        });
+      }
+
+      if (widget._howLongAgo != "Now") {
+        // If the time is showing in hours, cancel the timer
+        // This is because new tweets coming in should be enough to update the
+        // timer and tweets that far out of date are useless anyway
+        if (widget._howLongAgo[widget._howLongAgo.length - 5] == "h") {
+          widget._timeUpdater.cancel();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer, only if the timer exists. The timer might not be created
+    // if the time of the tweet was over an hour ago.
+    if (widget._timeUpdater != null) {
+      widget._timeUpdater.cancel();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Text(

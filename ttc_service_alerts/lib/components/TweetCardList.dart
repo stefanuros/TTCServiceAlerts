@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
+import 'package:ttc_service_alerts/config/config.dart';
 
 import 'TweetItem.dart';
 
@@ -59,12 +60,10 @@ class _TweetCardListState extends State<TweetCardList>
     WidgetsBinding.instance.addObserver(this);
 
     // Initialize the timer that will refresh the feed occasionally
-    // const duration = const Duration(minutes: 1);
-    // widget._timer = Timer.periodic(duration, (Timer t) {
-    //   _refreshHandler();
-    //   // Update the value to get a time update
-    //   print("In");
-    // });
+    const duration = const Duration(minutes: feedUpdateMinutes);
+    widget._timer = Timer.periodic(duration, (Timer t) {
+      _refreshHandler();
+    });
   }
 
   @override
@@ -106,14 +105,17 @@ class _TweetCardListState extends State<TweetCardList>
     // Create the new tweet items
     List<TweetItem> newTweetItems = TweetUtil.createTweetList(res.body);
 
-    // Add the new tweets to the front of the _tweets list
-    setState(() {
-      widget._tweets = [...newTweetItems, ...widget._tweets];
+    // Only sets the state if the widget is mounted (i.e. still exists in widget tree)
+    if(this.mounted) {
+      // Add the new tweets to the front of the _tweets list
+      setState(() {
+        widget._tweets = [...newTweetItems, ...widget._tweets];
 
-      if (newTweetItems.length > 0) {
-        widget._mostRecentTweet = newTweetItems[0].tweetId;
-      }
-    });
+        if (newTweetItems.length > 0) {
+          widget._mostRecentTweet = newTweetItems[0].tweetId;
+        }
+      });
+    }
 
     return null;
   }

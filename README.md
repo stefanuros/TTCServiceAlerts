@@ -35,10 +35,18 @@ Current next steps are:
 
 ## Screenshots
 
+* V 0.3
+*  Non visual changes include
+    * Timer to update feed
+    * Timer to update time of tweet as time goes on
+    * Feed is refreshed when app is reopened
+
+![Screenshot of Version 0.3](/assets/v_0_3.png)
+
 * V 0.2
 
-![Screenshot of Version 0.1](/assets/v_0_2.gif)
+![Gif of Version 0.2](/assets/v_0_2.gif)
 
 * V 0.1
 
-![Screenshot of Version 0.1](/assets/v_0_1.gif)
+![Gif of Version 0.1](/assets/v_0_1.gif)
