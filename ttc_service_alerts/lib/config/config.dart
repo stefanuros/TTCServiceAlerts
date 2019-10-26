@@ -11,6 +11,4 @@ const double chipFontSize = 16.0;
 const double timeFontSize = 14.0;
 
 /// This controls how often the feed is updated
-const int feedUpdateMinutes = 5;
-/// This controls how often the "How Long Ago" time is updated
-const int tweetTimeUpdateMinutes = 5;
+const int feedUpdateMinutes = 3;

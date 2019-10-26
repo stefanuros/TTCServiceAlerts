@@ -96,6 +96,7 @@ class _TweetCardListState extends State<TweetCardList>
     }
 
     // Make the request for the updated tweets
+    // TODO TimeoutException (TimeoutException after 0:00:10.000000: Future not completed)
     Response res = await widget._twitterOauth.getTwitterRequest(
       "GET",
       "statuses/user_timeline.json",
@@ -111,6 +112,8 @@ class _TweetCardListState extends State<TweetCardList>
       setState(() {
         widget._tweets = [...newTweetItems, ...widget._tweets];
 
+        // If there is a new tweet, update the most recent tweet to be used by
+        // the next fetch
         if (newTweetItems.length > 0) {
           widget._mostRecentTweet = newTweetItems[0].tweetId;
         }
