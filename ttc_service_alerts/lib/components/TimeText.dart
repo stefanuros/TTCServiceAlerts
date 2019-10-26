@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:ttc_service_alerts/config/config.dart';
 
@@ -13,8 +11,8 @@ class TimeText extends StatefulWidget {
   /// ago the tweet occured
   String _howLongAgo;
 
-  // This timer controls the updates to the tweet time
-  Timer _timeUpdater;
+  /// This is the function that the state defines which updates the time
+  Function _timeUpdateFunction;
 
   TimeText(this._dateTime) {
     // Setting the initial value for the time text
@@ -23,7 +21,13 @@ class TimeText extends StatefulWidget {
 
   /// This function updates the howLongAgo text for the tweet
   Null updateTime() {
-    _howLongAgo = _getTimeFrom(_dateTime);
+    // This function gets called to update the time. It is set by _TimeTextState
+    // If a specific card is not in the widget tree, this function is set to null
+    // because im not sure if it will be happy calling a function inside a
+    // non-mounted widget
+    if (_timeUpdateFunction != null) {
+      _timeUpdateFunction();
+    }
   }
 
   /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
@@ -77,46 +81,44 @@ class TimeText extends StatefulWidget {
 }
 
 class _TimeTextState extends State<TimeText> {
+
+  /// This function sets the time updater function to something in the state so
+  /// that it can use setState from external widgets
+  _setTimeUpdateFunction() {
+    widget._timeUpdateFunction = _updateTime;
+  }
+
+  /// This function updates the time by setting the state
+  _updateTime() {
+    if (this.mounted) {
+      setState(() {
+        widget._howLongAgo = widget._getTimeFrom(widget._dateTime);
+      });
+    }
+  }
+
+  /// This function unsets the external setState function to prevent side effects
+  _unsetTimeUpdateFunction() {
+    widget._timeUpdateFunction = null;
+  }
+
   @override
   initState() {
     super.initState();
 
-    // Initialize the timer that will refresh the feed occasionally
-    const duration = const Duration(minutes: tweetTimeUpdateMinutes);
+    // Update the time when the state is recreated
+    _updateTime();
 
-    // Only create a timer if the time is less than an hour. Anything more than
-    // an hour will be updated by refreshing the page, or by new tweets coming in
-    if (widget._howLongAgo != "Now" ||
-        widget._howLongAgo[widget._howLongAgo.length - 5] != "m") {
-      return;
-    }
-
-    widget._timeUpdater = Timer.periodic(duration, (Timer t) {
-      // Only sets the state if the widget is mounted (i.e. still exists in widget tree)
-      if (this.mounted) {
-        setState(() {
-          widget._howLongAgo = widget._getTimeFrom(widget._dateTime);
-        });
-      }
-
-      if (widget._howLongAgo != "Now") {
-        // If the time is showing in hours, cancel the timer
-        // This is because new tweets coming in should be enough to update the
-        // timer and tweets that far out of date are useless anyway
-        if (widget._howLongAgo[widget._howLongAgo.length - 5] == "h") {
-          widget._timeUpdater.cancel();
-        }
-      }
-    });
+    // Set the function to update the time from external widgets
+    _setTimeUpdateFunction();
   }
 
   @override
   void dispose() {
-    // Cancel the timer, only if the timer exists. The timer might not be created
-    // if the time of the tweet was over an hour ago.
-    if (widget._timeUpdater != null) {
-      widget._timeUpdater.cancel();
-    }
+    // Remove the function to update time from external widgets
+    // Do this cause not sure what side effects it may have
+    _unsetTimeUpdateFunction();
+
     super.dispose();
   }
 
