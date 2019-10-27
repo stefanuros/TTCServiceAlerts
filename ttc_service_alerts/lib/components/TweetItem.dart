@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 import 'package:ttc_service_alerts/config/ttcInfo.dart';
-import 'package:ttc_service_alerts/config/config.dart';
+import 'package:ttc_service_alerts/config/style.dart';
 
+import 'LinkText.dart';
 import 'TimeText.dart';
 
 /// This class is a tweet list item
 // TODO Add error checking if something goes wrong
-class TweetItem extends StatelessWidget { //ignore: must_be_immutable
+//ignore: must_be_immutable
+class TweetItem extends StatelessWidget {
   /// The id of the tweet
   String _tweetId;
 
   /// The tweet text
   String _tweetText;
+
+  /// The richtext widget used for the text
+  TextSpan _richTweetText;
 
   /// The time of the tweet
   DateTime _dateTime;
@@ -28,6 +33,10 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
   TweetItem(tweetMap) {
     _tweetId = tweetMap["id_str"];
     _tweetText = HtmlUnescape().convert(tweetMap["full_text"]);
+
+    String tweetFullText = HtmlUnescape().convert(tweetMap["full_text"]);
+
+    _richTweetText = _createRichTweet(tweetFullText);
 
     // Create a formatter for this datetime
     // Wed Oct 02 23:28:13 +0000 2019
@@ -81,6 +90,92 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
 
   String get tweetId {
     return _tweetId;
+  }
+
+  /// Function that creates a tweet that has clickable hashtags and links
+  TextSpan _createRichTweet(String text) {
+    // This string is the regex needed to isolate usernames and hashtags from a string
+    RegExp locateLinkRegex =
+        RegExp(r'((@|#[a-zA-Z])(\w)*|https?:\/\/\w*.\w*(\/\w*)?)');
+
+    // Everything that isnt a link
+    List<String> content = text.split(locateLinkRegex);
+    // Everything that is a link
+    List<String> link =
+        locateLinkRegex.allMatches(text).map((m) => m.group(0)).toList();
+
+    // Make the lists of strings into lists of widgets
+    List<InlineSpan> contentSpan = content.map((x) {
+      return TextSpan(
+        text: x,
+      );
+    }).toList();
+
+    List<InlineSpan> linkSpan = link.map((x) {
+      return _createLinkText(x, _createProperUrl(x));
+    }).toList();
+
+    // the above lists will alternate but we need to figure out which ones first
+    // Check if the first match of the regex is the same as the first X characters of text
+    RegExpMatch firstMatch = locateLinkRegex.firstMatch(text);
+
+    bool isLinkFirst = false;
+
+    if (firstMatch != null) {
+      // Check if the first link is the first thing in the text
+      isLinkFirst =
+          text.substring(0, firstMatch.group(0).length) == firstMatch.group(0);
+    }
+
+    // Zip the lists together where the order depends on isLinkFirst
+    List<InlineSpan> zippedList =
+        (isLinkFirst ? zipLists(linkSpan, contentSpan) : zipLists(contentSpan, linkSpan));
+
+    return TextSpan(
+      style: tweetStyle,
+      children: zippedList,
+    );
+  }
+
+  /// This function zips 2 lists together
+  List<K> zipLists<K>(List a, List b) {
+    List<K> zipped = [];
+
+    for (var i = 0; i < b.length; i++) {
+      zipped.add(a[i]);
+      zipped.add(b[i]);
+    }
+
+    zipped = [...zipped, ...a.sublist(b.length)];
+
+    return zipped;
+  }
+
+  /// Function to return a widgetspan to be used by _createRichTweet
+  WidgetSpan _createLinkText(String text, String url) {
+    return WidgetSpan(
+      child: LinkText(
+        text: text,
+        url: url,
+      ),
+    );
+  }
+
+  /// This function, when given something that should have a link, returns the
+  /// correct link for the input
+  /// E.g. hastags return hashtag links, usernames return username links, regular
+  /// links are returned as is
+  String _createProperUrl(String text) {
+    if (text[0] == "#") {
+      // input of #test returns link of https://twitter.com/hashtag/test
+      return "https://twitter.com/hashtag/" + text.substring(1);
+    } else if (text[0] == "@") {
+      // input of @test returns link of https://twitter.com/test
+      return "https://twitter.com/" + text.substring(1);
+    }
+
+    // Returns regular links
+    return text;
   }
 
   /// This function takes the tweet text and
@@ -305,10 +400,6 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        // child: Text(
-                        //   _getTimeFrom(_dateTime),
-                        //   style: TextStyle(fontSize: timeFontSize),
-                        // ),
                         child: _timeTextWidget,
                       ),
                     ),
@@ -316,12 +407,7 @@ class TweetItem extends StatelessWidget { //ignore: must_be_immutable
                 ),
               ),
               Padding(
-                child: Text(
-                  _tweetText,
-                  style: TextStyle(
-                    fontSize: tweetFontSize,
-                  ),
-                ),
+                child: Text.rich(_richTweetText),
                 padding: EdgeInsets.only(
                   left: 15.0,
                   right: 15.0,

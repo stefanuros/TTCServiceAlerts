@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:ttc_service_alerts/config/config.dart';
+import 'package:ttc_service_alerts/config/style.dart';
 
   /// This class is used to create a custom loading indicator
 class LoadingIndicator extends StatefulWidget {
