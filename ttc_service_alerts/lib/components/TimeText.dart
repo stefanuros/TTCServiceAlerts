@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ttc_service_alerts/config/config.dart';
+import 'package:ttc_service_alerts/config/style.dart';
 
 //ignore: must_be_immutable
 class TimeText extends StatefulWidget {

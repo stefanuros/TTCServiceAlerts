@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
-import 'package:ttc_service_alerts/config/config.dart';
+import 'package:ttc_service_alerts/config/style.dart';
 
 import 'TweetItem.dart';
 
