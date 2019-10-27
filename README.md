@@ -35,6 +35,11 @@ Current next steps are:
 
 ## Screenshots
 
+* V 0.4
+* Added hyperlinks to links, as well as to hashtags and twitter handles
+
+![Screenshot of Version 0.4](/assets/v_0_4.png)
+
 * V 0.3
 *  Non visual changes include
     * Timer to update feed
