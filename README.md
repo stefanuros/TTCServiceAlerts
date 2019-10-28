@@ -35,6 +35,14 @@ Current next steps are:
 
 ## Screenshots
 
+* V 0.5
+* Added an icon to the app. Multiple versions were created by the final choice 
+  was a square icon (image 1), and an adaptive icon (image 2) for phones that 
+  support that
+
+![Screenshot of Version 0.5](/assets/v_0_5_image1.png)
+![Screenshot of Version 0.5](/assets/v_0_5_image2.png)
+
 * V 0.4
 * Added hyperlinks to links, as well as to hashtags and twitter handles
 
