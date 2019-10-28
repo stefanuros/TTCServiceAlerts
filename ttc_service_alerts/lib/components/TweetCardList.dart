@@ -24,10 +24,13 @@ class TweetCardList extends StatefulWidget {
   /// The twitter request class
   final _twitterOauth;
 
-  // This is the timer for the tweet time being updated
+  /// This is the timer for the tweet time being updated
   Timer _timer;
 
-  TweetCardList(this._tweets, this._twitterOauth) {
+  /// This is the error message that occurs at any given moment
+  String errorText;
+
+  TweetCardList(this._tweets, this._twitterOauth, {this.errorText}) {
     // Set the most recent tweetID from the info that is passed in
     if (_tweets.length > 0) {
       _mostRecentTweet = _tweets[0].tweetId;
@@ -42,7 +45,6 @@ class TweetCardList extends StatefulWidget {
 
 class _TweetCardListState extends State<TweetCardList>
     with WidgetsBindingObserver {
-
   /// This function handles any lifecycle events, including leaving the app, and
   /// then coming back to it.
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -68,7 +70,7 @@ class _TweetCardListState extends State<TweetCardList>
 
   @override
   void dispose() {
-    widget._timer.cancel();
+    widget._timer?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -76,10 +78,13 @@ class _TweetCardListState extends State<TweetCardList>
   /// This function is called when the scroll is pulled down to refresh
   /// It fetches fresh tweets and updates the time of the tweets
   Future<Null> _refreshHandler() async {
+    widget.errorText = null;
+
     // Update the times for the current tweets
     for (var i = 0; i < widget._tweets.length; i++) {
       widget._tweets[i].updateTime();
     }
+
     // Setting the options for the request
     Map<String, String> opt = {
       "user_id": "19025957",
@@ -95,19 +100,25 @@ class _TweetCardListState extends State<TweetCardList>
       opt["since_id"] = widget._mostRecentTweet.toString();
     }
 
-    // Make the request for the updated tweets
-    // TODO TimeoutException (TimeoutException after 0:00:10.000000: Future not completed)
-    Response res = await widget._twitterOauth.getTwitterRequest(
-      "GET",
-      "statuses/user_timeline.json",
-      options: opt,
-    );
+    List<TweetItem> newTweetItems = [];
 
-    // Create the new tweet items
-    List<TweetItem> newTweetItems = TweetUtil.createTweetList(res.body);
+    try {
+      // Make the request for the updated tweets
+      Response res = await widget._twitterOauth.getTwitterRequest(
+        "GET",
+        "statuses/user_timeline.json",
+        options: opt,
+      );
+
+      // Create the new tweet items
+      newTweetItems = TweetUtil.createTweetList(res.body);
+    } catch (e) {
+      print(e);
+      _launchSnackBar("There was an issue updating the feed.");
+    }
 
     // Only sets the state if the widget is mounted (i.e. still exists in widget tree)
-    if(this.mounted) {
+    if (this.mounted) {
       // Add the new tweets to the front of the _tweets list
       setState(() {
         widget._tweets = [...newTweetItems, ...widget._tweets];
@@ -123,13 +134,63 @@ class _TweetCardListState extends State<TweetCardList>
     return null;
   }
 
+  void _launchSnackBar(String text) {
+    final snackBar = SnackBar(
+      duration: Duration(seconds: errorSnackBarSeconds),
+      content: Text(text),
+      action: SnackBarAction(
+        label: 'Retry',
+        onPressed: () {
+          _refreshHandler();
+        },
+      ),
+    );
+
+    // Find the Scaffold in the widget tree and use
+    // it to show a SnackBar.
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+
+  _problemWidget() {
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 150),
+          child: Column(
+            children: <Widget>[
+              Icon(
+                Icons.report_problem,
+                size: loadingIconSize,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.errorText,
+                  style: tweetStyle,
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget currentWidget = ListView(
+      children: widget._tweets,
+    );
+
+    if (widget.errorText != null) {
+      currentWidget = _problemWidget();
+      widget.errorText = null;
+    }
+
     return RefreshIndicator(
       onRefresh: _refreshHandler,
-      child: ListView(
-        children: widget._tweets,
-      ),
+      child: currentWidget,
     );
   }
 }

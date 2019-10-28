@@ -8,7 +8,6 @@ import 'LinkText.dart';
 import 'TimeText.dart';
 
 /// This class is a tweet list item
-// TODO Add error checking if something goes wrong
 //ignore: must_be_immutable
 class TweetItem extends StatelessWidget {
   /// The id of the tweet

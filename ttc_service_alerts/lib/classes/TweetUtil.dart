@@ -11,6 +11,11 @@ class TweetUtil {
     // Decode the string into a map
     var tweets = json.decode(tweetsString);
 
+    // If the rate limit has been exceeded, throw an error
+    if(tweets is Map && tweets.containsKey("errors")) {
+      throw(tweetsString);
+    }
+
     // The list of tweets that will be added into the list of tweets to display
     // List<TweetItem> tweetList = [];
     List<TweetItem> tweetList = [];
@@ -18,7 +23,12 @@ class TweetUtil {
     // Loop through the list of incoming tweets
     for (var i = 0; i < tweets.length; i++) {
       // For each incoming tweet, create a tweetItem
-      tweetList.add(TweetItem(tweets[i]));
+      try {
+        TweetItem newTweetItem = TweetItem(tweets[i]);
+        tweetList.add(newTweetItem);
+      } catch (e) {
+        print(e);
+      }
     }
 
     // Create a new list with the new tweets at the front
