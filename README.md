@@ -28,10 +28,10 @@ user should be notified of.
 ## Next Steps
 
 Current next steps are:
-* Fixing any graphical bugs that are occuring
-  * ~~Chips would overflow, rather than wrap, when there were too many~~
-  * Moving Time of tweet to top right corner of the box
-* Adding functionality for swipe down to update
+* Get app into app store
+* Add back end to handle all twitter requests
+* Add filtering functionality to feed
+* Add notification functionality
 
 ## Screenshots
 
