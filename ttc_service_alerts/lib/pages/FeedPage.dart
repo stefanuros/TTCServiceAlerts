@@ -4,7 +4,7 @@ import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
 import 'package:ttc_service_alerts/components/TweetCardList.dart';
 
 import '../config/keys.dart';
-import '../classes/TwitterOauth.dart';
+import '../classes/TwitterOauth.dart' ;
 
 class FeedPage extends StatelessWidget {
   // The twitter class that will be used for making requests
