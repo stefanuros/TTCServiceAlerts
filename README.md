@@ -7,6 +7,8 @@ screen so users can easily see which lines and stations are affected by the dela
 
 Below are screenshots of the current state.
 
+Here is the link to the google play page for it: https://play.google.com/store/apps/details?id=com.StefanU.ttc_service_alerts&hl=en
+
 ## Future Plans
 
 The current stage is finishing off the initial version of the app. This version
