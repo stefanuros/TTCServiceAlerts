@@ -11,16 +11,20 @@ Here is the link to the google play page for it: https://play.google.com/store/a
 
 ## Future Plans
 
-The current stage is finishing off the initial version of the app. This version
+~~The first stage is finishing off the initial version of the app. This version
 will display the information for the user. This stage was meant for getting the
 visuals up and running and to teach me about flutter and about using the Twitter
-API.
+API.~~
 
 The second state will be to move the Twitter API Calls to a server. This server is
 then what the app will query to get the twitter information. This solves the issue
 that the Twitter API has a limit on the number of requests in 15 minutes. 
 
-Finally, stage 3 is to use the new back end server to generate push notifications
+State three is the add filtering to the app feed. The filtering would allow you to 
+select only the lines that interest you, and only the relevant cards would be displayed
+to you.
+
+Stage four is to use the new back end server to generate push notifications
 for users using Firebase (subject to change) to send the notifications. The current
 version would not be able to generate notifications when the app is closed. Having
 the back end server solves this issue. The notifications will be customizable 
