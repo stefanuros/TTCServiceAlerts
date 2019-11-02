@@ -4,7 +4,7 @@ import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
 import 'package:ttc_service_alerts/components/TweetCardList.dart';
 
 import '../config/keys.dart';
-import '../classes/TwitterOauth.dart';
+import '../classes/TwitterOauth.dart' ;
 
 class FeedPage extends StatelessWidget {
   // The twitter class that will be used for making requests
@@ -31,27 +31,28 @@ class FeedPage extends StatelessWidget {
       // future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          // TODO Better error handling. Keep trying to refresh while error
-          return Center(
-            child: Text("Snapshot error: Please try again"),
-          );
+          // TODO Handle these errors
+          return TweetCardList([], _twitterOauth, errorText: "Snapshot Error. Couldn't update feed. Please swipe down to refresh.");
         }
         if (snapshot.connectionState == ConnectionState.done) {
-
           // Add the tweets to the list of tweets to display
           // var tweetList = TweetUtil.createTweetList(json.encode(mockTwitterData));
-          var tweetList = TweetUtil.createTweetList(snapshot.data.body);
+          try {
+            var tweetList = TweetUtil.createTweetList(snapshot.data.body);
+            return TweetCardList(tweetList, _twitterOauth);
+            
+          } catch (e) {
+            // TODO Handle these errors
+            return TweetCardList([], _twitterOauth, errorText: "Fetch Error. Couldn't update feed. Please swipe down to refresh.");
+          }
           // Create the tweetCardList with the tweets
-          return TweetCardList(tweetList, _twitterOauth);
         } else if (snapshot.connectionState == ConnectionState.active) {
           return LoadingIndicator();
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingIndicator();
         } else {
-          // TODO Better error handling. Keep trying to refresh while error
-          return Center(
-            child: Text("No result error: Please try again"),
-          );
+          // TODO Handle these errors
+          return TweetCardList([], _twitterOauth, errorText: "No Response. Couldn't update feed. Please swipe down to refresh.");
         }
       },
     );

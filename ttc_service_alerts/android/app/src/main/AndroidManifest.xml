@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.ttc_service_alerts">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -8,8 +10,9 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="ttc_service_alerts"
-        android:icon="@mipmap/ic_launcher">
+        android:label="TTC Service Alerts"
+        android:icon="@mipmap/ic_launcher"
+        android:versionCode="3">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

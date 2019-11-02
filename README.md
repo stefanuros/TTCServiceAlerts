@@ -7,18 +7,24 @@ screen so users can easily see which lines and stations are affected by the dela
 
 Below are screenshots of the current state.
 
+Here is the link to the google play page for it: https://play.google.com/store/apps/details?id=com.StefanU.ttc_service_alerts&hl=en
+
 ## Future Plans
 
-The current stage is finishing off the initial version of the app. This version
+~~The first stage is finishing off the initial version of the app. This version
 will display the information for the user. This stage was meant for getting the
 visuals up and running and to teach me about flutter and about using the Twitter
-API.
+API.~~
 
 The second state will be to move the Twitter API Calls to a server. This server is
 then what the app will query to get the twitter information. This solves the issue
 that the Twitter API has a limit on the number of requests in 15 minutes. 
 
-Finally, stage 3 is to use the new back end server to generate push notifications
+State three is the add filtering to the app feed. The filtering would allow you to 
+select only the lines that interest you, and only the relevant cards would be displayed
+to you.
+
+Stage four is to use the new back end server to generate push notifications
 for users using Firebase (subject to change) to send the notifications. The current
 version would not be able to generate notifications when the app is closed. Having
 the back end server solves this issue. The notifications will be customizable 
@@ -28,12 +34,20 @@ user should be notified of.
 ## Next Steps
 
 Current next steps are:
-* Fixing any graphical bugs that are occuring
-  * ~~Chips would overflow, rather than wrap, when there were too many~~
-  * Moving Time of tweet to top right corner of the box
-* Adding functionality for swipe down to update
+* Get app into app store
+* Add back end to handle all twitter requests
+* Add filtering functionality to feed
+* Add notification functionality
 
 ## Screenshots
+
+* V 0.5
+* Added an icon to the app. Multiple versions were created by the final choice 
+  was a square icon (image 1), and an adaptive icon (image 2) for phones that 
+  support that
+
+![Screenshot of Version 0.5](/assets/v_0_5_image1.png)
+![Screenshot of Version 0.5](/assets/v_0_5_image2.png)
 
 * V 0.4
 * Added hyperlinks to links, as well as to hashtags and twitter handles

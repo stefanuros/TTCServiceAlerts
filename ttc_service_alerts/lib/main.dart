@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'pages/FeedPage.dart';
-import 'pages/SettingsPage.dart';
+// import 'pages/SettingsPage.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
             //   ],
             // ),
           ),
-          body: FeedPage(), // TODO Remove this once the second tab is added
+          body: FeedPage(), // Remove this once the second tab is added
           // body: SafeArea(
           //   child: TabBarView(
           //     children: [

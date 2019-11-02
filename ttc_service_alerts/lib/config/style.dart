@@ -32,3 +32,6 @@ const TextStyle hashtagStyle = TextStyle(
 
 /// This controls how often the feed is updated
 const int feedUpdateMinutes = 1;
+
+/// This controls how long the error snackbar stays on the screen
+const int errorSnackBarSeconds = 30; 
