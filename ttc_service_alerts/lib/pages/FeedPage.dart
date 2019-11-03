@@ -31,7 +31,6 @@ class FeedPage extends StatelessWidget {
       // future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          // TODO Handle these errors
           return TweetCardList([], _twitterOauth, errorText: "Snapshot Error. Couldn't update feed. Please swipe down to refresh.");
         }
         if (snapshot.connectionState == ConnectionState.done) {
@@ -42,7 +41,6 @@ class FeedPage extends StatelessWidget {
             return TweetCardList(tweetList, _twitterOauth);
             
           } catch (e) {
-            // TODO Handle these errors
             return TweetCardList([], _twitterOauth, errorText: "Fetch Error. Couldn't update feed. Please swipe down to refresh.");
           }
           // Create the tweetCardList with the tweets
@@ -51,7 +49,6 @@ class FeedPage extends StatelessWidget {
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingIndicator();
         } else {
-          // TODO Handle these errors
           return TweetCardList([], _twitterOauth, errorText: "No Response. Couldn't update feed. Please swipe down to refresh.");
         }
       },
