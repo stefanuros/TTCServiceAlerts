@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timezone/timezone.dart';
 import 'package:ttc_service_alerts/config/style.dart';
 
 //ignore: must_be_immutable
@@ -31,9 +32,11 @@ class TimeText extends StatefulWidget {
   }
 
   /// Function that sets how long ago the tweet was, in minutes, hours, days, weeks, and months
-  String _getTimeFrom(DateTime tweetTime) {
-    // Current DateTime
-    DateTime now = DateTime.now();
+  String _getTimeFrom(TZDateTime tweetTime) {
+    // New York time zone is close enough to toronto since toronto isnt an option
+    final est = getLocation('America/New_York');
+
+    TZDateTime now = TZDateTime.now(est);    
 
     // Find the difference between the 2 times
     var diff = now.difference(tweetTime).inMinutes;
