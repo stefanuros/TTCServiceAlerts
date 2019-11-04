@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:timezone/timezone.dart';
 
 import 'pages/FeedPage.dart';
 // import 'pages/SettingsPage.dart';
 
-void main() => runApp(MyApp());
+// void main() => runApp(MyApp());
+
+void main() async {
+  // This loads the timezone information then starts the app
+  var byteData =
+      await rootBundle.load('packages/timezone/data/$tzDataDefaultFilename');
+  initializeDatabase(byteData.buffer.asUint8List());
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -34,8 +44,8 @@ class MyApp extends StatelessWidget {
           //     children: [
           //       FeedPage(),
           //       SettingsPage()
-                // Icon(Icons.directions_transit),
-                // Icon(Icons.notifications_active),
+          // Icon(Icons.directions_transit),
+          // Icon(Icons.notifications_active),
           //     ],
           //   ),
           // ),
