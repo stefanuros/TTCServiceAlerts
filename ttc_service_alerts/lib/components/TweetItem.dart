@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/standalone.dart';
 import 'package:ttc_service_alerts/config/ttcInfo.dart';
 import 'package:ttc_service_alerts/config/style.dart';
 
@@ -20,7 +21,7 @@ class TweetItem extends StatelessWidget {
   TextSpan _richTweetText;
 
   /// The time of the tweet
-  DateTime _dateTime;
+  TZDateTime _dateTime;
 
   /// The transit line in question
   List<Map> _chipText;
@@ -37,24 +38,7 @@ class TweetItem extends StatelessWidget {
 
     _richTweetText = _createRichTweet(tweetFullText);
 
-    // Create a formatter for this datetime
-    // Wed Oct 02 23:28:13 +0000 2019
-    // * Removing the timezone with substring
-    var f = new DateFormat('EEE MMM dd HH:mm:ss yyyy');
-
-    // Use the formatter to parse the datetime
-    _dateTime = f
-        .parse(
-          tweetMap["created_at"].substring(0, 20) +
-              tweetMap["created_at"].substring(26, 30),
-        )
-        // Subtract 4 hours because tweets come in with UTC time so this converts
-        // it back to toronto time
-        .subtract(
-          Duration(
-            hours: 4,
-          ),
-        );
+    _setDateTime(tweetMap["created_at"]);
 
     // Use Regex to find the affected lines in the tweet
     _chipText = _createChipText(_tweetText);
@@ -89,6 +73,43 @@ class TweetItem extends StatelessWidget {
 
   String get tweetId {
     return _tweetId;
+  }
+
+  /// This function calculates the EST time when given UTC and hopefully accounts
+  /// for daylight savings time
+  Future<void> _setDateTime(String dateTimeString) async {
+    // init timezone data
+    // await initializeTimeZone();
+
+    // Create a formatter for this datetime
+    // Wed Oct 02 23:28:13 +0000 2019
+    var f = new DateFormat('EEE MMM dd HH:mm:ss yyyy');
+
+    // Get the tweet time which is in UTC by default
+    // * Removing the timezone with substring
+    var dateTimeUtc = f.parse(
+      dateTimeString.substring(0, 20) + dateTimeString.substring(26, 30),
+    );
+
+    // New York time zone is close enough to toronto since toronto isnt an option
+    Location est = getLocation('America/New_York');
+
+    // Convert dateTimeUtc to utc timezone with TZDateTime type
+    var tzDateTimeUtc = TZDateTime.utc(
+      dateTimeUtc.year,
+      dateTimeUtc.month,
+      dateTimeUtc.day,
+      dateTimeUtc.hour,
+      dateTimeUtc.minute,
+      dateTimeUtc.second,
+      dateTimeUtc.millisecond,
+      dateTimeUtc.microsecond,
+    );
+
+    var dateTimeEst = TZDateTime.from(tzDateTimeUtc, est);
+
+    // Set the tweet datetime to the converted EST time
+    _dateTime = dateTimeEst;
   }
 
   /// Function that creates a tweet that has clickable hashtags and links
@@ -127,8 +148,9 @@ class TweetItem extends StatelessWidget {
     }
 
     // Zip the lists together where the order depends on isLinkFirst
-    List<InlineSpan> zippedList =
-        (isLinkFirst ? zipLists(linkSpan, contentSpan) : zipLists(contentSpan, linkSpan));
+    List<InlineSpan> zippedList = (isLinkFirst
+        ? zipLists(linkSpan, contentSpan)
+        : zipLists(contentSpan, linkSpan));
 
     return TextSpan(
       style: tweetStyle,
@@ -280,18 +302,6 @@ class TweetItem extends StatelessWidget {
     }
 
     return info;
-  }
-
-  // @override
-  String toStr() {
-    return "chipText: " +
-        _chipText.toString() +
-        "tweetText: " +
-        _tweetText +
-        "dateTime: " +
-        _dateTime.toString() +
-        "tweetId: " +
-        _tweetId;
   }
 
   _createChips() {
