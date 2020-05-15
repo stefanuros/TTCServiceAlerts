@@ -69,3 +69,14 @@ Current next steps are:
 * V 0.1
 
 ![Gif of Version 0.1](/assets/v_0_1.gif)
+
+## Building New Version
+
+When building new version, follow the steps below.
+This link is useful: https://flutter.dev/docs/deployment/android
+
+* In pubspec.yaml change version number
+* In android/app/src/main/AndroidManifest.xml change version number
+* Cd to app root and run flutter build appbundle
+** .aab file will be generated in build/app/outputs/bundle/release/app.aab
+** Upload this file to Google Play Console
