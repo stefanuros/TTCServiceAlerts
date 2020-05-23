@@ -1,13 +1,25 @@
-# ttc_service_alerts
+# TTC Service Alerts
 
 TTC Service Alerts is an app that displays a feed of current TTC delay information.
 TTC is the toronto transit commision. I am using the Twitter API to get tweets
 from the @TTCnotices twitter account, and displaying the information on the 
 screen so users can easily see which lines and stations are affected by the delay.
 
+As of mid-May, I have added an extra step to how the app gets twitter data. Normally
+there is a limit on the number of requests that I can make to the Twitter Api. This
+limit is 150 in 15 minutes. This poses an issue if enough instances of the app are
+running at the same time. The solution was to add my own server that makes a request to
+the Twitter Api every minute and store the tweet data. Then the app will make a request
+to my server to get the tweets. That way, every app will make requests to my server
+and the server will constantly query the Twitter Api at a maximum of 15 times in 
+15 minutes (once per minute). That way I eliminate the bottleneck that the Twitter
+Api has caused.
+[Here is the repo for the backend server (made in Deno)](https://github.com/stefanuros/ttc_service_alerts_server_deno)
+
+
 Below are screenshots of the current state.
 
-Here is the link to the google play page for it: https://play.google.com/store/apps/details?id=com.StefanU.ttc_service_alerts&hl=en
+[Here is the link to the google play page for it](https://play.google.com/store/apps/details?id=com.StefanU.ttc_service_alerts&hl=en)
 
 ## Future Plans
 
@@ -16,9 +28,9 @@ will display the information for the user. This stage was meant for getting the
 visuals up and running and to teach me about flutter and about using the Twitter
 API.~~
 
-The second state will be to move the Twitter API Calls to a server. This server is
+~~The second state will be to move the Twitter API Calls to a server. This server is
 then what the app will query to get the twitter information. This solves the issue
-that the Twitter API has a limit on the number of requests in 15 minutes. 
+that the Twitter API has a limit on the number of requests in 15 minutes.~~
 
 State three is the add filtering to the app feed. The filtering would allow you to 
 select only the lines that interest you, and only the relevant cards would be displayed
@@ -34,8 +46,8 @@ user should be notified of.
 ## Next Steps
 
 Current next steps are:
-* Get app into app store
-* Add back end to handle all twitter requests
+* ~~Get app into app store~~
+* ~~Add back end to handle all twitter requests~~
 * Add filtering functionality to feed
 * Add notification functionality
 
@@ -46,7 +58,8 @@ Current next steps are:
   was a square icon (image 1), and an adaptive icon (image 2) for phones that 
   support that
 
-![Screenshot of Version 0.5](/assets/v_0_5_image1.png)
+<img src="/assets/v_0_5_image1.png" alt="Screenshot of Version 0.5" width="345"/>
+
 ![Screenshot of Version 0.5](/assets/v_0_5_image2.png)
 
 * V 0.4
