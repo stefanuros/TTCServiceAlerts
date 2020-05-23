@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
 import 'package:ttc_service_alerts/components/TweetCardList.dart';
@@ -16,17 +17,23 @@ class FeedPage extends StatelessWidget {
 
   FutureBuilder _createInitialTweetCardList() {
     return FutureBuilder(
-      future: _twitterOauth.getTwitterRequest(
-        "GET",
-        "statuses/user_timeline.json",
-        options: {
-          "user_id": "19025957",
-          "screen_name": "TTCnotices",
-          "count": "20",
-          "trim_user": "true",
-          // "exclude_replies": "true",
-          "tweet_mode": "extended" // Used to prevent truncating tweets
-        },
+      // future: _twitterOauth.getTwitterRequest(
+      //   "GET",
+      //   "statuses/user_timeline.json",
+      //   options: {
+      //     "user_id": "19025957",
+      //     "screen_name": "TTCnotices",
+      //     "count": "20",
+      //     "trim_user": "true",
+      //     // "exclude_replies": "true",
+      //     "tweet_mode": "extended" // Used to prevent truncating tweets
+      //   },
+      // ),
+      future: get(
+        Uri.http(
+        "104.196.135.76", 
+        "/ttcServiceAlerts/api/tweets"
+        )
       ),
       // future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
       builder: (context, snapshot) {

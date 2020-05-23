@@ -104,11 +104,22 @@ class _TweetCardListState extends State<TweetCardList>
 
     try {
       // Make the request for the updated tweets
-      Response res = await widget._twitterOauth.getTwitterRequest(
-        "GET",
-        "statuses/user_timeline.json",
-        options: opt,
-      );
+      // Response res = await widget._twitterOauth.getTwitterRequest(
+      //   "GET",
+      //   "statuses/user_timeline.json",
+      //   options: opt,
+      // );
+
+      // Figure out if sinceId needs to be added
+      String sinceId = widget._mostRecentTweet != null ?
+        "/" + widget._mostRecentTweet.toString() :
+        "";
+
+      // Make the request to the backend server to get the tweets
+      Response res = await get(Uri.http(
+        "104.196.135.76", 
+        "/ttcServiceAlerts/api/tweetsSince" + sinceId
+      ));
 
       // Create the new tweet items
       newTweetItems = TweetUtil.createTweetList(res.body);
