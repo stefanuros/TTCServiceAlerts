@@ -6,7 +6,7 @@ final List<RegExp> regLis = [
   // This line matches any links
   RegExp(r'(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)'),
   // This line matches any times
-  RegExp(r'(\d+ ?[apAP].?[mM]|\d\d?:\d\d)'),
+  RegExp(r'(\d+ ?[apAP]\.?[mM]|\d\d?:\d\d)'),
   // This line matches any 4 digit years
   RegExp(r'(\d{4})'),
   /// Getting rid of durations (15 minutes, etc)
