@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'package:ttc_service_alerts/config/style.dart';
+import 'package:ttc_service_alerts/config/tweetRequestConfig.dart';
 
 import 'TweetItem.dart';
 
@@ -104,7 +105,7 @@ class _TweetCardListState extends State<TweetCardList>
 
     try {
       Response res;
-      
+
       try {
         // Figure out if sinceId needs to be added
         String sinceId = widget._mostRecentTweet != null ?
@@ -113,8 +114,9 @@ class _TweetCardListState extends State<TweetCardList>
 
         // Make the request to the backend server to get the tweets
         res = await get(Uri.http(
-          "104.196.135.76", 
-          "/ttcServiceAlerts/api/tweetsSince" + sinceId
+          // "104.196.135.76", 
+          tweetServerBaseUrl,
+          tweetsSincePath + sinceId
         ));
       } catch (e) {
         // Make the fallback request for the updated tweets

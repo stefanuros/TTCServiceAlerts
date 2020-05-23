@@ -3,6 +3,7 @@ import 'package:http/http.dart';
 import 'package:ttc_service_alerts/classes/TweetUtil.dart';
 import 'package:ttc_service_alerts/components/LoadingIndicator.dart';
 import 'package:ttc_service_alerts/components/TweetCardList.dart';
+import 'package:ttc_service_alerts/config/tweetRequestConfig.dart';
 
 import '../config/keys.dart';
 import '../classes/TwitterOauth.dart' ;
@@ -31,8 +32,8 @@ class FeedPage extends StatelessWidget {
       // ),
       future: get(
         Uri.http(
-        "104.196.135.76", 
-        "/ttcServiceAlerts/api/tweets"
+          tweetServerBaseUrl, 
+          tweetsPath
         )
       ),
       // future: Future.delayed(Duration(seconds: 1), () => "mockTwitterData"),
