@@ -3,8 +3,6 @@
 /// This is the list of regular expressions that is used to prevent issues when
 /// attempting to isolate the line numbers in the tweet text. 
 final List<RegExp> regLis = [
-  // This line matches any links
-  RegExp(r'(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)'),
   // This line matches any times
   RegExp(r'(\d+ ?[apAP]\.?[mM]|\d\d?:\d\d)'),
   // This line matches any 4 digit years
@@ -25,4 +23,6 @@ final List<RegExp> regLis = [
   RegExp(r'([Oo][Cc][Tt][Oo]?[Bb]?[Ee]?[Rr]? \d\d?)'), // Oct, October
   RegExp(r'([Nn][Oo][Vv][Ee]?[Mm]?[Bb]?[Ee]?[Rr]? \d\d?)'), // Nov, November
   RegExp(r'([Dd][Ee][Cc][Ee]?[Mm]?[Bb]?[Ee]?[Rr]? \d\d?)'), // Dec, December
+  // This line matches any links
+  RegExp(r'(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.-]*)'),
 ];
