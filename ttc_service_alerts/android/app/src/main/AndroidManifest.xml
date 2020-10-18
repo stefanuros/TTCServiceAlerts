@@ -12,7 +12,7 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="TTC Service Alerts"
         android:icon="@mipmap/ic_launcher"
-        android:versionCode="11">
+        android:versionCode="13">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
