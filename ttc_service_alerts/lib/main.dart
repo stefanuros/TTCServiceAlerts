@@ -8,6 +8,7 @@ import 'pages/FeedPage.dart';
 // void main() => runApp(MyApp());
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // This loads the timezone information then starts the app
   var byteData =
       await rootBundle.load('packages/timezone/data/$tzDataDefaultFilename');
